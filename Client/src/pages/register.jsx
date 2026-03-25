@@ -1,120 +1,3 @@
-// import { useState } from "react";
-// import { useNavigate } from "react-router-dom";
-// import "./register.css";
-
-// function Register() {
-//   const navigate = useNavigate();
-
-//   const [form, setForm] = useState({
-//     name: "",
-//     email: "",
-//     password: "",
-//     confirmPassword: "",
-//     phone: "",
-//   });
-
-//   const handleChange = (e) => {
-//     setForm({ ...form, [e.target.name]: e.target.value });
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-
-//     // 🔐 Password match check
-//     if (form.password !== form.confirmPassword) {
-//       alert("Passwords do not match ❌");
-//       return;
-//     }
-
-//     try {
-//       const res = await fetch("http://localhost:5000/api/users/register", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({
-//           name: form.name,
-//           email: form.email,
-//           password: form.password,
-//           phone: form.phone,
-//         }),
-//       });
-
-//       const data = await res.json();
-
-//       if (res.ok) {
-//         alert(data.message || "Registered successfully ✅");
-
-//         // 🔥 Redirect to login
-//         navigate("/login");
-//       } else {
-//         alert(data.message || "Registration failed ❌");
-//       }
-
-//     } catch (error) {
-//       alert("Something went wrong ❌");
-//     }
-//   };
-
-//   return (
-//     <div className="container register-bg">
-//       <div className="form-box">
-//         <h2>Create Account</h2>
-
-//         <form onSubmit={handleSubmit}>
-//           <input
-//             name="name"
-//             placeholder="Full Name"
-//             onChange={handleChange}
-//             required
-//           />
-
-//           <input
-//             type="email"
-//             name="email"
-//             placeholder="Email Address"
-//             onChange={handleChange}
-//             required
-//           />
-
-//           <input
-//             type="password"
-//             name="password"
-//             placeholder="Password"
-//             onChange={handleChange}
-//             required
-//           />
-
-//           <input
-//             type="password"
-//             name="confirmPassword"
-//             placeholder="Confirm Password"
-//             onChange={handleChange}
-//             required
-//           />
-
-//           <input
-//             name="phone"
-//             placeholder="Phone Number"
-//             onChange={handleChange}
-//             required
-//           />
-
-//           <button type="submit">Register</button>
-//         </form>
-
-//         <a href="/login">Already have an account? Login</a>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default Register;
-
-
-
-
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./register.css";
@@ -175,6 +58,7 @@ function Register() {
           email: form.email,
           password: form.password,
           phone: form.phone,
+          role: "user",
         }),
       });
 
@@ -199,7 +83,12 @@ function Register() {
       type: "text",
       placeholder: "Full Name",
       icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+        >
           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
           <circle cx="12" cy="7" r="4" />
         </svg>
@@ -210,7 +99,12 @@ function Register() {
       type: "email",
       placeholder: "Email Address",
       icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+        >
           <rect x="2" y="4" width="20" height="16" rx="2" />
           <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
         </svg>
@@ -221,7 +115,12 @@ function Register() {
       type: showPassword ? "text" : "password",
       placeholder: "Password",
       icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+        >
           <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
           <path d="M7 11V7a5 5 0 0 1 10 0v4" />
         </svg>
@@ -234,7 +133,12 @@ function Register() {
       type: showConfirm ? "text" : "password",
       placeholder: "Confirm Password",
       icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+        >
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
         </svg>
       ),
@@ -246,7 +150,12 @@ function Register() {
       type: "tel",
       placeholder: "Phone Number",
       icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+        >
           <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
         </svg>
       ),
@@ -254,7 +163,13 @@ function Register() {
   ];
 
   const EyeIcon = ({ open }) => (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" style={{ width: 18, height: 18 }}>
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      style={{ width: 18, height: 18 }}
+    >
       {open ? (
         <>
           <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
@@ -271,86 +186,110 @@ function Register() {
   );
 
   return (
-    <div className="register-root">
-      <div className="orb orb-1" />
-      <div className="orb orb-2" />
-      <div className="orb orb-3" />
-      <div className="noise-overlay" />
+    <div className="register-page">
+      <div className="register-root">
+        <div className="orb orb-1" />
+        <div className="orb orb-2" />
+        <div className="orb orb-3" />
+        <div className="noise-overlay" />
 
-      <div className="register-card">
+        <div className="register-card">
+          {/* Header */}
+          <div className="card-header">
+            <h1>Create Account</h1>
+            <p>Join the experience. It only takes a moment.</p>
+          </div>
 
-    
-
-        {/* Header */}
-        <div className="card-header">
-          <h1>Create Account</h1>
-          <p>Join the experience. It only takes a moment.</p>
-        </div>
-
-        {/* Global Messages */}
-        {errors.api && <div className="msg msg-error">{errors.api}</div>}
-        {errors.success && <div className="msg msg-success">{errors.success}</div>}
-
-        <form onSubmit={handleSubmit} noValidate>
-          {fields.map((field, i) => (
-            <div
-              key={field.name}
-              className={`field-wrap ${focused === field.name ? "field-focused" : ""} ${errors[field.name] ? "field-error" : ""}`}
-              style={{ animationDelay: `${i * 0.07}s` }}
-            >
-              <div className="field-icon">{field.icon}</div>
-              <input
-                type={field.type}
-                name={field.name}
-                placeholder={field.placeholder}
-                value={form[field.name]}
-                onChange={handleChange}
-                onFocus={() => setFocused(field.name)}
-                onBlur={() => setFocused("")}
-                autoComplete="off"
-              />
-              {field.toggle && (
-                <button type="button" className="eye-btn" onClick={field.toggle} tabIndex={-1}>
-                  <EyeIcon open={field.toggleIcon} />
-                </button>
-              )}
-              {errors[field.name] && (
-                <span className="field-error-msg">{errors[field.name]}</span>
-              )}
-            </div>
-          ))}
-
-          {/* Password Strength */}
-          {form.password && (
-            <div className="strength-bar">
-              <div className={`strength-fill strength-${
-                form.password.length < 6 ? "weak" : form.password.length < 10 ? "medium" : "strong"
-              }`} />
-              <span>
-                {form.password.length < 6 ? "Weak" : form.password.length < 10 ? "Medium" : "Strong"}
-              </span>
-            </div>
+          {/* Global Messages */}
+          {errors.api && <div className="msg msg-error">{errors.api}</div>}
+          {errors.success && (
+            <div className="msg msg-success">{errors.success}</div>
           )}
 
-          <button type="submit" className={`submit-btn ${loading ? "loading" : ""}`} disabled={loading}>
-            {loading ? (
-              <span className="spinner" />
-            ) : (
-              <>
-                <span>Create Account</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 18, height: 18 }}>
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </>
+          <form onSubmit={handleSubmit} noValidate>
+            {fields.map((field, i) => (
+              <div
+                key={field.name}
+                className={`field-wrap ${focused === field.name ? "field-focused" : ""} ${errors[field.name] ? "field-error" : ""}`}
+                style={{ animationDelay: `${i * 0.07}s` }}
+              >
+                <div className="field-icon">{field.icon}</div>
+                <input
+                  type={field.type}
+                  name={field.name}
+                  placeholder={field.placeholder}
+                  value={form[field.name]}
+                  onChange={handleChange}
+                  onFocus={() => setFocused(field.name)}
+                  onBlur={() => setFocused("")}
+                  autoComplete="off"
+                />
+                {field.toggle && (
+                  <button
+                    type="button"
+                    className="eye-btn"
+                    onClick={field.toggle}
+                    tabIndex={-1}
+                  >
+                    <EyeIcon open={field.toggleIcon} />
+                  </button>
+                )}
+                {errors[field.name] && (
+                  <span className="field-error-msg">{errors[field.name]}</span>
+                )}
+              </div>
+            ))}
+
+            {/* Password Strength */}
+            {form.password && (
+              <div className="strength-bar">
+                <div
+                  className={`strength-fill strength-${
+                    form.password.length < 6
+                      ? "weak"
+                      : form.password.length < 10
+                        ? "medium"
+                        : "strong"
+                  }`}
+                />
+                <span>
+                  {form.password.length < 6
+                    ? "Weak"
+                    : form.password.length < 10
+                      ? "Medium"
+                      : "Strong"}
+                </span>
+              </div>
             )}
-          </button>
-        </form>
 
+            <button
+              type="submit"
+              className={`submit-btn ${loading ? "loading" : ""}`}
+              disabled={loading}
+            >
+              {loading ? (
+                <span className="spinner" />
+              ) : (
+                <>
+                  <span>Create Account</span>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    style={{ width: 18, height: 18 }}
+                  >
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </>
+              )}
+            </button>
+          </form>
 
-        <p className="login-link">
-          Already have an account? <a href="/login">Sign in</a>
-        </p>
-
+          <p className="login-link">
+            Already have an account? <a href="/login">Sign in</a>
+          </p>
+        </div>
       </div>
     </div>
   );
