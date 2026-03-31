@@ -8,6 +8,7 @@ import VerifyOtp from "./pages/verifyotp";
 import About from "./pages/about";
 import Contact from "./pages/contact";
 import Policy from "./pages/policy";
+import Rooms from "./pages/rooms";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/policy" element={<Policy />} />
+        <Route path="/rooms" element={<Rooms />} />
       </Routes>
     </BrowserRouter>
   );

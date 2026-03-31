@@ -1,5 +1,4 @@
 import Navbar from "../components/Navbar";
-import Hero from "../components/Hero";
 import ResortCard from "../components/ResortCard";
 import Footer from "../components/Footer";
 import { useEffect, useState } from "react";
@@ -29,16 +28,155 @@ function Home() {
       <Navbar />
       {/* <Hero /> */}
 
-      <section className="home-intro">
-        <div className="home-intro-inner">
-          <h1>Serena Hotels</h1>
-          <p>
-            Discover our curated collection of iconic lodges, luxury resorts, and
-            heritage palaces across Africa and Asia. Every stay is crafted to
-            inspire lasting memories, with personalized service and unrivaled
-            local authenticity.
-          </p>
-          <button>Discover Our Destinations</button>
+      <section className="home-hero">
+        <div className="home-hero-inner">
+          <div className="hero-copy">
+            <span>Rooms & Suites</span>
+            <h1>Hello. Salut. Hola.</h1>
+            <p>
+              Serena Hotels & Resorts blends modern luxury, inspired design, and
+              unforgettable hospitality. Create your next escape with curated
+              stays and exceptional service.
+            </p>
+            <div className="hero-actions">
+              <button>Explore Rooms</button>
+              <button className="ghost-btn">View Destinations</button>
+            </div>
+
+            <div className="hero-stat-grid">
+              <div>
+                <strong>120+</strong>
+                <p>Luxury suites</p>
+              </div>
+              <div>
+                <strong>35</strong>
+                <p>Exclusive resorts</p>
+              </div>
+              <div>
+                <strong>24/7</strong>
+                <p>Guest service</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="hero-aside">
+            <div className="hero-card">
+              <span className="eyebrow">Plan your stay</span>
+              <h2>Search availability</h2>
+
+              <div className="booking-widget">
+                <div className="booking-topbar">
+                  <div>
+                    <h3>Best Rate Finder</h3>
+                    <p>Secure unforgettable stays with premium amenities.</p>
+                  </div>
+                  <span>Special</span>
+                </div>
+
+                <div className="booking-container">
+                  <div className="booking-item destination-item">
+                    <span>Destination</span>
+                    <input
+                      type="text"
+                      value={destination}
+                      onChange={(e) => setDestination(e.target.value)}
+                      placeholder="Where are you going?"
+                    />
+                  </div>
+
+                  <div className="date-bar">
+                    <div className="date-pill">
+                      <small>Check-in</small>
+                      <input
+                        type="date"
+                        value={checkIn}
+                        onChange={(e) => setCheckIn(e.target.value)}
+                      />
+                    </div>
+                    <div className="date-pill">
+                      <small>Check-out</small>
+                      <input
+                        type="date"
+                        value={checkOut}
+                        onChange={(e) => setCheckOut(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="booking-item counter-item">
+                    <span>Adults</span>
+                    <div className="counter">
+                      <button type="button" onClick={() => setAdults((prev) => Math.max(prev - 1, 1))}>-</button>
+                      <span>{adults}</span>
+                      <button type="button" onClick={() => setAdults((prev) => prev + 1)}>+</button>
+                    </div>
+                  </div>
+
+                  <div className="booking-item counter-item">
+                    <span>Children</span>
+                    <div className="counter">
+                      <button type="button" onClick={() => setChildren((prev) => Math.max(prev - 1, 0))}>-</button>
+                      <span>{children}</span>
+                      <button type="button" onClick={() => setChildren((prev) => prev + 1)}>+</button>
+                    </div>
+                  </div>
+
+                  <div className="booking-item counter-item">
+                    <span>Rooms</span>
+                    <div className="counter">
+                      <button type="button" onClick={() => setRooms((prev) => Math.max(prev - 1, 1))}>-</button>
+                      <span>{rooms}</span>
+                      <button type="button" onClick={() => setRooms((prev) => prev + 1)}>+</button>
+                    </div>
+                  </div>
+
+                  <div className="booking-action">
+                    <button className="enquire-btn" type="button">Check Availability</button>
+                    <button className="link-btn" type="button">Special Offers</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="welcome-section">
+        <div className="welcome-grid">
+          <div className="welcome-media">
+            <div className="welcome-card large">
+              <img
+                src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80"
+                alt="Hotel view"
+              />
+            </div>
+            <div className="welcome-row">
+              <div className="welcome-card small">
+                <img
+                  src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=900&q=80"
+                  alt="Resort pool"
+                />
+              </div>
+              <div className="welcome-card small">
+                <img
+                  src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80"
+                  alt="Dining area"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="welcome-copy">
+            <p className="eyebrow">Raising comfort to the highest level</p>
+            <h2>Welcome to Serena Hotel</h2>
+            <p>
+              Our blend of warm hospitality, refined design, and local culture
+              makes every stay memorable. Discover thoughtful experiences,
+              elevated dining, and beautifully styled spaces for your next
+              getaway.
+            </p>
+            <button className="primary-btn">Read More</button>
+          </div>
         </div>
       </section>
 
