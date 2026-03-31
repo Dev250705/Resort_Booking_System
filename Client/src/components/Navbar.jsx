@@ -9,10 +9,10 @@ export default function Navbar() {
       <ul className="nav-links">
         <li><Link to="/">Home</Link></li>
         <li><Link to="#">Accommodation</Link></li>
-        <li><Link to="#">Policy</Link></li>
-        <li><Link to="#">Gallery</Link></li>
-        <li><Link to="#">About</Link></li>
-        <li><Link to="#">Contact</Link></li>
+        <li><Link to="/policy">Policy</Link></li>
+        <li><Link to="/rooms">Rooms</Link></li>
+        <li><Link to="/about">About</Link></li>
+        <li><Link to="/contact">Contact</Link></li>
       </ul>
 
       <div className="auth">

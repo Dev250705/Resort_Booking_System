@@ -66,7 +66,9 @@ function Register() {
 
       if (res.ok) {
         setErrors({ success: data.message || "Registered successfully!" });
-        setTimeout(() => navigate("/login"), 1500);
+        setTimeout(() => {
+          navigate("/verify-otp", { state: { email: form.email } });
+        }, 1500);
       } else {
         setErrors({ api: data.message || "Registration failed. Try again." });
       }
