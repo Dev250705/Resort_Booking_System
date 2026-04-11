@@ -1,48 +1,139 @@
-.navbar {
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@400;600;700&display=swap');
+
+.resort-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+  padding: 20px 8% 0;
+  box-sizing: border-box;
+  background: linear-gradient(180deg, #0a1428 0%, #141e2f 100%);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  transition: transform 0.3s ease-in-out;
+}
+
+.resort-header.hidden {
+  transform: translateY(-100%);
+}
+
+/* Top Header Contact */
+.top-header-contact {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 60px;
-  background: white;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  color: white;
+  margin-bottom: 25px;
+  font-family: 'Montserrat', sans-serif;
 }
 
-.logo {
-  font-size: 28px;
-  font-weight: 700;
-  color: #2563eb;
-}
-
-.nav-links {
+.contact-item {
   display: flex;
-  gap: 30px;
-  list-style: none;
-}
-
-.nav-links a {
-  text-decoration: none;
-  color: #333;
-  font-weight: 500;
-  transition: 0.3s;
-}
-
-.nav-links a:hover {
-  color: #2563eb;
-}
-
-.auth {
-  display: flex;
+  align-items: center;
   gap: 15px;
+}
+
+.icon {
+  font-size: 24px;
+}
+
+.contact-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-title {
+  font-size: 11px;
+  letter-spacing: 2px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.contact-value {
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 1px;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* Center Logo */
+.center-logo {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
   align-items: center;
 }
 
-.auth a {
-  text-decoration: none;
+.center-logo h1 {
+  margin: 0;
+  font-family: 'Playfair Display', serif;
+  font-size: 42px;
+  font-weight: 400;
+  line-height: 1;
 }
 
-.btn {
-  background: #2563eb;
+.center-logo span {
+  font-size: 10px;
+  letter-spacing: 3px;
+  font-weight: 600;
+  margin-top: 5px;
+}
+
+/* Dark Navbar */
+.dark-navbar {
+  background: rgba(34, 34, 34, 0.85); /* Dark translucent */
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  height: 60px;
+}
+
+.dark-nav-links {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 20px;
+  align-items: center;
+  height: 100%;
+}
+
+.dark-nav-links li {
+  height: 100%;
+}
+
+.dark-nav-links a {
+  display: flex;
+  align-items: center;
   color: white;
-  padding: 10px 18px;
-  border-radius: 8px;
+  text-decoration: none;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 0 20px;
+  height: 100%;
+  transition: 0.3s;
+}
+
+.dark-nav-links a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f9a826;
+}
+
+.nav-search-btn {
+  background-color: #f9a826; /* Orange Theme */
+  border: none;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  color: white;
+  font-size: 18px;
+  transition: 0.3s;
+}
+
+.nav-search-btn:hover {
+  background-color: #df9118;
 }

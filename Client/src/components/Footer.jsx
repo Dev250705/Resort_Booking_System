@@ -4,14 +4,6 @@ import { Link } from "react-router-dom";
 export default function Footer() {
   return (
     <footer className="footer">
-      {/* NEWSLETTER SECTION */}
-      <section className="newsletter-section">
-        <div className="newsletter-container">
-          <h2>Subscribe to news, offers & announcements</h2>
-          <button className="newsletter-btn">Newsletter Sign Up</button>
-        </div>
-      </section>
-
       {/* MAIN FOOTER */}
       <div className="footer-main">
         <div className="footer-container">

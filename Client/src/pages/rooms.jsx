@@ -1,18 +1,24 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "./rooms.css";
 
 export default function Rooms() {
-   
+
   const [resorts, setResorts] = useState([]);
   const [filteredResorts, setFilteredResorts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeFilter, setActiveFilter] = useState("all");
   const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedResort, setSelectedResort] = useState(null);
+  const [searchParams] = useSearchParams();
+  const resortId = searchParams.get("resortId");
+  const isDetailView = Boolean(resortId);
   const navigate = useNavigate();
+  const location = useLocation();
+  const searchState = location.state || {};
 
   const filters = ["All", "Luxury", "Deluxe", "Standard", "Economy", "Suite"];
 
@@ -39,20 +45,47 @@ export default function Rooms() {
     fetchResorts();
   }, []);
 
-const handleFilterClick = (filter) => {
-  setActiveFilter(filter.toLowerCase());
+  useEffect(() => {
+    if (!resortId) {
+      setSelectedResort(null);
+      return;
+    }
 
-  if (filter.toLowerCase() === "all") {
-    setFilteredResorts(resorts);
-  } else {
-    setFilteredResorts(
-      resorts.filter(
-        (resort) =>
-          resort.category?.toLowerCase() === filter.toLowerCase()
-      )
-    );
-  }
-};
+    const fetchResortDetails = async () => {
+      setDetailLoading(true);
+      try {
+        const response = await fetch(`http://localhost:5000/api/resorts/${resortId}`);
+        if (!response.ok) {
+          throw new Error("Resort not found");
+        }
+        const data = await response.json();
+        setSelectedResort(data);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching resort details:", err);
+        setError("Unable to load resort details. Please try again later.");
+      } finally {
+        setDetailLoading(false);
+      }
+    };
+
+    fetchResortDetails();
+  }, [resortId]);
+
+  const handleFilterClick = (filter) => {
+    setActiveFilter(filter.toLowerCase());
+
+    if (filter.toLowerCase() === "all") {
+      setFilteredResorts(resorts);
+    } else {
+      setFilteredResorts(
+        resorts.filter(
+          (resort) =>
+            resort.category?.toLowerCase() === filter.toLowerCase()
+        )
+      );
+    }
+  };
 
   const handleImageClick = (resort) => {
     setSelectedImage(resort);
@@ -63,20 +96,172 @@ const handleFilterClick = (filter) => {
   };
 
   const handleBookNow = (resortId) => {
-    navigate(`/booking/${resortId}`);
+    navigate(`/resort/${resortId}`, { state: searchState });
   };
 
-  return (
-      <div className="gallery-container">
-        <Navbar />;
-      {/* Hero Section */}
-      <section className="gallery-hero">
-        <div className="hero-overlayy"></div>
-        <div className="hero-content">
-          <h1 className="gallery-title">Gallery</h1>
-          <p className="gallery-subtitle">IMAGES OF OUR BEAUTIFUL ROOMS & RESORT</p>
+  const getMapQuery = (resort) => {
+    if (!resort) return "";
+    return [resort.location?.address, resort.location?.city, resort.location?.state]
+      .filter(Boolean)
+      .join(", ");
+  };
+
+  const renderDetailView = () => {
+    if (detailLoading) {
+      return (
+        <div className="gallery-container">
+          <Navbar />
+          <div className="detail-loading">Loading resort details...</div>
+          <Footer />
         </div>
-      </section>
+      );
+    }
+
+    if (error) {
+      return (
+        <div className="gallery-container">
+          <Navbar />
+          <div className="detail-error">{error}</div>
+          <Footer />
+        </div>
+      );
+    }
+
+    if (!selectedResort) {
+      return (
+        <div className="gallery-container">
+          <Navbar />
+          <div className="detail-error">Resort not found.</div>
+          <Footer />
+        </div>
+      );
+    }
+
+    const mapQuery = getMapQuery(selectedResort);
+    const mapSrc = `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
+
+    return (
+      <div className="resort-detail-page">
+        <Navbar />
+        <section className="detail-hero">
+          <div
+            className="detail-hero-image"
+            style={{
+              backgroundImage: `url(${selectedResort.images?.[0] || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80"})`,
+            }}
+          >
+            <div className="detail-hero-overlay"></div>
+            <div className="detail-hero-copy">
+              <span>Resort Details</span>
+              <h1>{selectedResort.name}</h1>
+              <p>
+                {selectedResort.location?.city || "Unknown city"}
+                {selectedResort.location?.state ? `, ${selectedResort.location.state}` : ""}
+              </p>
+              <button
+                type="button"
+                className="detail-back-btn"
+                onClick={() => navigate("/rooms")}
+              >
+                Back to Gallery
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section className="detail-summary">
+          <div className="detail-main">
+            <h2>About this resort</h2>
+            <p>{selectedResort.description || "Beautiful resort with curated amenities and exquisite rooms."}</p>
+
+            <div className="detail-meta">
+              <div>
+                <strong>Rating</strong>
+                <p>{selectedResort.rating?.toFixed(1) || "N/A"} ⭐</p>
+              </div>
+              <div>
+                <strong>Room types</strong>
+                <p>{selectedResort.roomTypes?.length || 0}</p>
+              </div>
+              <div>
+                <strong>Location</strong>
+                <p>{mapQuery || "Location details not available"}</p>
+              </div>
+            </div>
+
+            {selectedResort.amenities?.length > 0 && (
+              <div className="detail-amenities">
+                <h3>Amenities</h3>
+                <ul>
+                  {selectedResort.amenities.map((amenity, idx) => (
+                    <li key={idx}>{amenity}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          <div className="detail-map">
+            <h3>Resort location</h3>
+            <iframe
+              title="Resort location map"
+              width="100%"
+              height="320"
+              frameBorder="0"
+              scrolling="no"
+              src={mapSrc}
+              allowFullScreen
+            />
+          </div>
+        </section>
+
+        <section className="detail-rooms">
+          <h2>Room availability</h2>
+          <div className="room-types-grid">
+            {selectedResort.roomTypes?.length > 0 ? (
+              selectedResort.roomTypes.map((room) => (
+                <div className="room-card" key={room._id || room.title}>
+                  <h4>{room.title}</h4>
+                  <p>{room.description || "Comfortable stay with included amenities."}</p>
+                  <div className="room-stats">
+                    <span>Guests: {room.maxGuests || "-"}</span>
+                    <span>Available: {room.inventoryCount ?? "-"}</span>
+                  </div>
+                  <div className="room-price">₹{room.basePrice || "-"} / night</div>
+                </div>
+              ))
+            ) : (
+              <p>No room types are available for this resort yet.</p>
+            )}
+          </div>
+        </section>
+
+        <section className="detail-gallery">
+          <h2>Resort gallery</h2>
+          <div className="gallery-images">
+            {selectedResort.images?.length > 0 ? (
+              selectedResort.images.map((img, index) => (
+                <img key={index} src={img} alt={`${selectedResort.name} ${index + 1}`} />
+              ))
+            ) : (
+              <img
+                src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80"
+                alt="Resort"
+              />
+            )}
+          </div>
+        </section>
+
+        <Footer />
+      </div>
+    );
+  };
+
+  return isDetailView ? renderDetailView() : (
+    <div className="gallery-container">
+      <Navbar />
+
+
 
       {/* Filter Section */}
       <section className="filter-section">
@@ -85,9 +270,8 @@ const handleFilterClick = (filter) => {
             {filters.map((filter) => (
               <button
                 key={filter}
-                className={`filter-btn ${
-                  activeFilter === filter.toLowerCase() ? "active" : ""
-                }`}
+                className={`filter-btn ${activeFilter === filter.toLowerCase() ? "active" : ""
+                  }`}
                 onClick={() => handleFilterClick(filter)}
               >
                 {filter}
@@ -166,7 +350,7 @@ const handleFilterClick = (filter) => {
             <div className="modal-info">
               <h2 className="modal-title">{selectedImage.name}</h2>
               <p className="modal-description">{selectedImage.description}</p>
-              
+
               {selectedImage.amenities && selectedImage.amenities.length > 0 && (
                 <div className="modal-amenities">
                   <h4>Amenities</h4>
@@ -218,7 +402,7 @@ const handleFilterClick = (filter) => {
           <button className="cta-btn">Explore More</button>
         </div>
       </section>
-      <Footer />;
+      <Footer />
     </div>
   );
 }

@@ -1,15 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const Resort = require("../models/Resort");
+const resortController = require("../controllers/resortController");
 
-// GET all resorts
-router.get("/", async (req, res) => {
-  try {
-    const resorts = await Resort.find().sort({ _id: -1 });
-    res.json(resorts);
-  } catch (err) {
-    res.status(500).json({ message: "Error fetching resorts" });
-  }
-});
+// GET all resorts or Search resorts via Query Params
+// Example search: /api/resorts?checkIn=...&checkOut=...&guests=4&rooms=2
+router.get("/", resortController.searchResorts);
+
+// GET a single resort detail by ID
+router.get("/:id", resortController.getResortById);
 
 module.exports = router;

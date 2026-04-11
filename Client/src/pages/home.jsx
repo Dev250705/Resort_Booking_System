@@ -1,20 +1,30 @@
 import Navbar from "../components/Navbar";
-import ResortCard from "../components/ResortCard";
 import Footer from "../components/Footer";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./home.css";
 
 function Home() {
   const [resorts, setResorts] = useState([]);
-  const today = new Date().toISOString().split('T')[0];
-  const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const navigate = useNavigate();
 
-  const [destination, setDestination] = useState('');
-  const [checkIn, setCheckIn] = useState(today);
-  const [checkOut, setCheckOut] = useState(tomorrow);
-  const [rooms, setRooms] = useState(1);
-  const [adults, setAdults] = useState(2);
+  const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
+  const [checkIn, setCheckIn] = useState("");
+  const [checkOut, setCheckOut] = useState("");
+  const [showGuests, setShowGuests] = useState(false);
+
+  const heroSlides = [
+    {
+      image: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=1920&q=80",
+      title: "Enjoy A Luxury\nExperience"
+    },
+    {
+      image: "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=1920&q=80",
+      title: "Stay Safely\nWith Us"
+    }
+  ];
 
   useEffect(() => {
     fetch("http://localhost:5000/api/resorts")
@@ -23,300 +33,183 @@ function Home() {
       .catch((err) => console.log(err));
   }, []);
 
+  // Auto Slider Effect
+  useEffect(() => {
+    const slideInterval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 4500); // changes every 4.5 seconds
+    return () => clearInterval(slideInterval);
+  }, [heroSlides.length]);
+
+  const handlePrev = () => {
+    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+  };
+
+  const handleNext = () => {
+    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+  };
+
+  const today = new Date().toISOString().split("T")[0];
+
   return (
     <>
       <Navbar />
-      {/* <Hero /> */}
-
-      <section className="home-hero">
-        <div className="home-hero-inner">
-          <div className="hero-copy">
-            <span>Rooms & Suites</span>
-            <h1>Hello. Salut. Hola.</h1>
-            <p>
-              Serena Hotels & Resorts blends modern luxury, inspired design, and
-              unforgettable hospitality. Create your next escape with curated
-              stays and exceptional service.
-            </p>
-            <div className="hero-actions">
-              <button>Explore Rooms</button>
-              <button className="ghost-btn">View Destinations</button>
-            </div>
-
-            <div className="hero-stat-grid">
-              <div>
-                <strong>120+</strong>
-                <p>Luxury suites</p>
-              </div>
-              <div>
-                <strong>35</strong>
-                <p>Exclusive resorts</p>
-              </div>
-              <div>
-                <strong>24/7</strong>
-                <p>Guest service</p>
-              </div>
-            </div>
+      <main className="theme-orange-home">
+        
+        {/* HERO SECTION MATCHING MOCKUP */}
+        <section className="theme-hero">
+          <div 
+            key={currentSlide}
+            className="theme-hero-bg" 
+            style={{ backgroundImage: `url(${heroSlides[currentSlide].image})` }}
+          >
+            <div className="theme-overlay"></div>
           </div>
+          
+          <button className="theme-arrow left-arrow" onClick={handlePrev}>&lang;</button>
+          
+          <div className="theme-hero-content">
+            <h1>{heroSlides[currentSlide].title}</h1>
+            <button className="theme-book-btn">BOOK NOW</button>
+          </div>
+          
+          <button className="theme-arrow right-arrow" onClick={handleNext}>&rang;</button>
+        </section>
 
-          <div className="hero-aside">
-            <div className="hero-card">
-              <span className="eyebrow">Plan your stay</span>
-              <h2>Search availability</h2>
-
-              <div className="booking-widget">
-                <div className="booking-topbar">
-                  <div>
-                    <h3>Best Rate Finder</h3>
-                    <p>Secure unforgettable stays with premium amenities.</p>
-                  </div>
-                  <span>Special</span>
-                </div>
-
-                <div className="booking-container">
-                  <div className="booking-item destination-item">
-                    <span>Destination</span>
-                    <input
-                      type="text"
-                      value={destination}
-                      onChange={(e) => setDestination(e.target.value)}
-                      placeholder="Where are you going?"
-                    />
-                  </div>
-
-                  <div className="date-bar">
-                    <div className="date-pill">
-                      <small>Check-in</small>
-                      <input
-                        type="date"
-                        value={checkIn}
-                        onChange={(e) => setCheckIn(e.target.value)}
-                      />
+        {/* BOOKING SEARCH BAR */}
+        <div className="home-search-wrapper">
+          <form className="home-search-form" onSubmit={(e) => { 
+            e.preventDefault(); 
+            navigate('/rooms', { state: { checkIn, checkOut, guests: adults + children } }); 
+          }}>
+            <div className="search-field">
+              <label>Location</label>
+              <input type="text" placeholder="Where do you want to go?" />
+            </div>
+            <div className="search-field">
+              <label>Check-in</label>
+              <input type="date" min={today} value={checkIn} onChange={e => setCheckIn(e.target.value)} />
+            </div>
+            <div className="search-field">
+              <label>Check-out</label>
+              <input type="date" min={checkIn || today} value={checkOut} onChange={e => setCheckOut(e.target.value)} />
+            </div>
+            
+            <div className="search-field guest-field" style={{ position: 'relative' }}>
+              <label>Guests</label>
+              <div 
+                className="guest-selector-display"
+                onClick={() => setShowGuests(!showGuests)}
+              >
+                {adults} Adult{adults !== 1 ? 's' : ''}, {children} Child{children !== 1 ? 'ren' : ''}
+              </div>
+              
+              {showGuests && (
+                <div className="guest-dropdown">
+                  <div className="guest-row">
+                    <div className="guest-info">
+                      <strong>Adults</strong>
+                      <span>Ages 13+</span>
                     </div>
-                    <div className="date-pill">
-                      <small>Check-out</small>
-                      <input
-                        type="date"
-                        value={checkOut}
-                        onChange={(e) => setCheckOut(e.target.value)}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="booking-item counter-item">
-                    <span>Adults</span>
-                    <div className="counter">
-                      <button type="button" onClick={() => setAdults((prev) => Math.max(prev - 1, 1))}>-</button>
+                    <div className="guest-controls">
+                      <button type="button" onClick={() => adults > 1 && setAdults(adults - 1)}>-</button>
                       <span>{adults}</span>
-                      <button type="button" onClick={() => setAdults((prev) => prev + 1)}>+</button>
+                      <button type="button" onClick={() => setAdults(adults + 1)}>+</button>
                     </div>
                   </div>
-
-                  <div className="booking-item counter-item">
-                    <span>Children</span>
-                    <div className="counter">
-                      <button type="button" onClick={() => setChildren((prev) => Math.max(prev - 1, 0))}>-</button>
+                  <div className="guest-row">
+                    <div className="guest-info">
+                      <strong>Children</strong>
+                      <span>Ages 2-12</span>
+                    </div>
+                    <div className="guest-controls">
+                      <button type="button" onClick={() => children > 0 && setChildren(children - 1)}>-</button>
                       <span>{children}</span>
-                      <button type="button" onClick={() => setChildren((prev) => prev + 1)}>+</button>
+                      <button type="button" onClick={() => setChildren(children + 1)}>+</button>
                     </div>
-                  </div>
-
-                  <div className="booking-item counter-item">
-                    <span>Rooms</span>
-                    <div className="counter">
-                      <button type="button" onClick={() => setRooms((prev) => Math.max(prev - 1, 1))}>-</button>
-                      <span>{rooms}</span>
-                      <button type="button" onClick={() => setRooms((prev) => prev + 1)}>+</button>
-                    </div>
-                  </div>
-
-                  <div className="booking-action">
-                    <button className="enquire-btn" type="button">Check Availability</button>
-                    <button className="link-btn" type="button">Special Offers</button>
                   </div>
                 </div>
-              </div>
+              )}
+            </div>
+
+            <button type="submit" className="search-submit-btn">CHECK AVAILABILITY</button>
+          </form>
+        </div>
+
+        {/* FEATURED RESORTS SECTION */}
+        <section className="popular-rooms-section">
+          <h2>Available Resorts</h2>
+
+          <div className="popular-grid">
+            {resorts.map((resort, index) => {
+              // Calculate starting price if rooms exist
+              const prices = resort.roomTypes?.map(r => r.basePrice) || [];
+              const startingPrice = prices.length > 0 ? Math.min(...prices) : null;
+              
+              const imageUrl = resort.images?.[0] || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80";
+
+              return (
+                <div className="popular-card" key={resort._id || index}>
+                  <div className="popular-card-img">
+                    <img src={imageUrl} alt={resort.name} />
+                    {startingPrice && <div className="price-tag">From ₹{startingPrice}</div>}
+                  </div>
+                  <div className="popular-card-content">
+                    <h3>{resort.name}</h3>
+                    <div className="stars">
+                      {'★'.repeat(Math.max(1, Math.round(resort.rating || 5)))}{'☆'.repeat(5 - Math.max(1, Math.round(resort.rating || 5)))}
+                    </div>
+                    <div style={{color: '#666', fontSize: '14px', marginBottom: '15px'}}>
+                        📍 {resort.location?.city || "Unknown Location"}
+                    </div>
+                    <div className="card-footer-flex">
+                      <div className="duration">🚪 {resort.roomTypes?.length || 0} Room Types</div>
+                      <button
+                        type="button"
+                        className="learn-more-btn"
+                        onClick={() => navigate(`/resort/${resort._id}`, { state: { checkIn, checkOut, guests: adults + children } })}
+                      >
+                        VIEW RESORT
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* PREMIUM EXPERIENCES SECTION */}
+        <section className="experiences-section">
+          <div className="experiences-header">
+            <h2>Unforgettable Experiences</h2>
+            <p>Elevate your stay with our world-class amenities</p>
+          </div>
+          <div className="experiences-grid">
+            <div className="experience-card">
+              <span className="exp-icon">🍷</span>
+              <h4>Gourmet Dining</h4>
+              <p>Savor culinary masterpieces crafted by top chefs.</p>
+            </div>
+            <div className="experience-card">
+              <span className="exp-icon">🧘‍♀️</span>
+              <h4>Spa & Wellness</h4>
+              <p>Rejuvenate your mind and body in our luxury spas.</p>
+            </div>
+            <div className="experience-card">
+              <span className="exp-icon">🏊‍♂️</span>
+              <h4>Private Pools</h4>
+              <p>Infinity pools with breathtaking scenic views.</p>
+            </div>
+            <div className="experience-card">
+              <span className="exp-icon">🚠</span>
+              <h4>Adventure</h4>
+              <p>Thrilling outdoor activities curated just for you.</p>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="welcome-section">
-        <div className="welcome-grid">
-          <div className="welcome-media">
-            <div className="welcome-card large">
-              <img
-                src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80"
-                alt="Hotel view"
-              />
-            </div>
-            <div className="welcome-row">
-              <div className="welcome-card small">
-                <img
-                  src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=900&q=80"
-                  alt="Resort pool"
-                />
-              </div>
-              <div className="welcome-card small">
-                <img
-                  src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80"
-                  alt="Dining area"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="welcome-copy">
-            <p className="eyebrow">Raising comfort to the highest level</p>
-            <h2>Welcome to Serena Hotel</h2>
-            <p>
-              Our blend of warm hospitality, refined design, and local culture
-              makes every stay memorable. Discover thoughtful experiences,
-              elevated dining, and beautifully styled spaces for your next
-              getaway.
-            </p>
-            <button className="primary-btn">Read More</button>
-          </div>
-        </div>
-      </section>
-
-      <section className="featured-resorts">
-        <div className="section-header">
-          <p>Featured Resorts</p>
-          <h2>Selected Escape Experiences</h2>
-        </div>
-
-        <div className="grid">
-          {resorts.slice(0, 8).map((resort, index) => (
-            <ResortCard key={index} resort={resort} />
-          ))}
-        </div>
-
-        <div className="cta-row">
-          <button className="primary-btn">Browse All Resorts</button>
-        </div>
-      </section>
-
-      <section className="prestige-club">
-        <div className="section-header">
-          <p>Prestige Club</p>
-          <h2>Earn. Redeem. Experience.</h2>
-        </div>
-
-        <div className="club-grid">
-          <article>
-            <h3>Priority Reservations</h3>
-            <p>Lock in premium rooms before they sell out.</p>
-          </article>
-          <article>
-            <h3>Member-only Rates</h3>
-            <p>Enjoy exclusive savings across all properties.</p>
-          </article>
-          <article>
-            <h3>Special Amenities</h3>
-            <p>Receive curated welcome surprises in every stay.</p>
-          </article>
-          <article>
-            <h3>Complimentary Experiences</h3>
-            <p>Access local adventures and elite wellness services.</p>
-          </article>
-        </div>
-
-        <div className="cta-row">
-          <button className="secondary-btn">Join Prestige Club</button>
-        </div>
-      </section>
-
-      <section className="destinations">
-        <div className="section-header">
-          <p>Unique Africa Destinations</p>
-          <h2>Curated Safari & Journey Escapes</h2>
-        </div>
-
-        <div className="destination-grid">
-          <article>
-            <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=900&q=80" alt="Kenya Safari" />
-            <div>
-              <h3>Journey into Kenya’s Wild Heart</h3>
-              <button>Book Safari</button>
-            </div>
-          </article>
-          <article>
-            <img src="https://images.unsplash.com/photo-1516426122078-c23e76319801" alt="Tanzania" />
-            <div>
-              <h3>Safari through Tanzania’s Timeless Beauty</h3>
-              <button>Book Safari</button>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section className="offers">
-        <div className="section-header">
-          <p>Special Offers</p>
-          <h2>Unlock Limited-Time Luxury Packages</h2>
-        </div>
-
-        <div className="offers-grid">
-          <article>
-            <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80" alt="Package" />
-            <div>
-              <h4>Serena Beach Escape</h4>
-              <p>Book 5 nights, get 2 nights complimentary.</p>
-              <button>Book Offer</button>
-            </div>
-          </article>
-          <article>
-            <img src="https://images.unsplash.com/photo-1496412705862-e0088f16f791?auto=format&fit=crop&w=900&q=80" alt="Package" />
-            <div>
-              <h4>Wellness Detox Retreat</h4>
-              <p>Stay 4 nights and enjoy a free spa treatment.</p>
-              <button>Book Offer</button>
-            </div>
-          </article>
-          <article>
-            <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0" alt="Package" />
-            <div>
-              <h4>Gourmet Journey</h4>
-              <p>Complimentary dinner for two in our signature restaurant.</p>
-              <button>Book Offer</button>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section className="news-map">
-        <div className="news-section">
-          <div className="section-header">
-            <p>Serena News</p>
-            <h2>Latest Updates & Announcements</h2>
-          </div>
-
-          <div className="news-grid">
-            <article>
-              <h3>New Luxury Suite Launch in Islamabad</h3>
-              <p>Experience world-class comfort and elegant design in our newest property.</p>
-            </article>
-            <article>
-              <h3>Community Empowerment Initiative</h3>
-              <p>Empowering local artisans through sustainable partnerships.</p>
-            </article>
-            <article>
-              <h3>Eco-Friendly Hospitality Awards</h3>
-              <p>Serena Hotels recognized for industry-leading sustainability.</p>
-            </article>
-          </div>
-        </div>
-
-        <div className="map-section">
-          <div className="map-box">
-            <h3>Find Serena Hotels</h3>
-            <p>Explore our properties across Africa and Asia on the interactive map.</p>
-            <img src="https://images.unsplash.com/photo-1518659526055-9bca04fb1a53?auto=format&fit=crop&w=1200&q=80" alt="Map" />
-          </div>
-        </div>
-      </section>
-
+      </main>
       <Footer />
     </>
   );
