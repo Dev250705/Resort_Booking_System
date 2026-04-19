@@ -6,6 +6,7 @@ const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const OTP = require("../models/otp");
+const { getJwtSecret } = require("../middleware/authMiddleware");
 
 const transporter = nodemailer.createTransport({
   service: "Gmail",
@@ -134,10 +135,17 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
+    const secret = getJwtSecret();
+    if (!secret) {
+      return res.status(500).json({
+        message: "Server misconfiguration: JWT_SECRET is not set",
+      });
+    }
+
     const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      { id: user._id.toString(), role: user.role },
+      secret,
+      { expiresIn: "7d" }
     );
 
     res.json({
@@ -202,6 +210,142 @@ router.post("/reset-password", async (req, res) => {
     res.json({ message: "Password reset successful" });
   } catch {
     res.status(500).json({ message: "Error resetting password" });
+  }
+});
+
+const { authMiddleware } = require("../middleware/authMiddleware");
+
+// Update Profile route
+router.put("/update-profile", authMiddleware, async (req, res) => {
+  try {
+    const { name, phone } = req.body;
+    const userId = req.user.id;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (name) user.name = name;
+    if (phone) user.phone = phone;
+
+    await user.save();
+    
+    res.json({ message: "Profile updated successfully", user });
+  } catch (err) {
+    console.error("Error updating profile:", err);
+    res.status(500).json({ message: "Error updating profile" });
+  }
+});
+
+// Update Password route
+router.put("/update-password", authMiddleware, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user.id;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Incorrect current password" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+
+    await user.save();
+
+    res.json({ message: "Password updated successfully" });
+  } catch (err) {
+    console.error("Error updating password:", err);
+    res.status(500).json({ message: "Error updating password" });
+  }
+});
+
+// Get Profile route
+router.get("/profile", authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId).select('-password');
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ user });
+  } catch (err) {
+    console.error("Error fetching profile:", err);
+    res.status(500).json({ message: "Error fetching profile" });
+  }
+});
+
+// Toggle Wishlist
+router.post("/wishlist/toggle", authMiddleware, async (req, res) => {
+  try {
+    const { resortId } = req.body;
+    const userId = req.user.id;
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const index = user.wishlist.indexOf(resortId);
+    if (index > -1) {
+      user.wishlist.splice(index, 1); // remove
+    } else {
+      user.wishlist.push(resortId); // add
+    }
+
+    await user.save();
+    res.json({ message: "Wishlist updated", wishlist: user.wishlist });
+  } catch (err) {
+    console.error("Error toggling wishlist:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Get Wishlist
+router.get("/wishlist", authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId).populate('wishlist');
+    if (!user) return res.status(404).json({ message: "User not found" });
+    
+    res.json({ wishlist: user.wishlist });
+  } catch (err) {
+    console.error("Error fetching wishlist:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+const { adminMiddleware } = require("../middleware/adminMiddleware");
+
+// Admin: Get all users
+router.get("/admin/all", authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    const users = await User.find().select("-password").sort({ createdAt: -1 });
+    res.json(users);
+  } catch (err) {
+    console.error("Error fetching users for admin:", err);
+    res.status(500).json({ message: "Server error fetching users" });
+  }
+});
+
+// Admin: Update user role
+router.put("/admin/:id/role", authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    const { role } = req.body;
+    if (!["admin", "user"].includes(role)) {
+      return res.status(400).json({ message: "Invalid role" });
+    }
+    await User.findByIdAndUpdate(req.params.id, { role });
+    res.json({ message: "Role updated successfully" });
+  } catch (err) {
+    console.error("Error updating user role:", err);
+    res.status(500).json({ message: "Server error updating role" });
   }
 });
 

@@ -46,9 +46,12 @@ function Login() {
       });
       const data = await res.json();
       if (res.ok && data.token) {
-        localStorage.setItem("token", data.token);
+        sessionStorage.setItem("token", data.token);
         setErrors({ success: "Login successful! Redirecting..." });
-        const redirectPath = location.state?.from || "/home";
+        let redirectPath = location.state?.from;
+        if (!redirectPath) {
+          redirectPath = data.user?.role === "admin" ? "/admin/dashboard" : "/home";
+        }
         const redirectState = location.state?.searchState || {};
 
         setTimeout(() => navigate(redirectPath, { state: redirectState }), 1500);

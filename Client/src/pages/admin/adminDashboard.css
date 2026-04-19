@@ -1,0 +1,126 @@
+.admin-dashboard-page {
+  min-height: 100vh;
+  background-color: #0f1115;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+}
+
+.admin-dashboard-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem 4rem;
+}
+
+.admin-header {
+  margin-bottom: 3rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 2rem;
+}
+
+.admin-header h1 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  background: linear-gradient(135deg, #fff 0%, #a0a5b5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.admin-lead {
+  font-size: 1.1rem;
+  color: #a0a5b5;
+  margin: 0;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.admin-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 2rem;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-card:hover:not(.disabled) {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(201, 169, 107, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.admin-card-icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(201, 169, 107, 0.1);
+  color: #c9a96b;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.admin-card-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.admin-card h2 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin: 0 0 0.75rem;
+  color: #fff;
+}
+
+.admin-card p {
+  font-size: 0.95rem;
+  color: #a0a5b5;
+  line-height: 1.5;
+  margin: 0;
+  flex-grow: 1;
+}
+
+.admin-card.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  filter: grayscale(100%);
+}
+
+.coming-soon {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: #a0a5b5;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 99px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+@media (max-width: 768px) {
+  .admin-dashboard-inner {
+    padding: 100px 1.5rem 3rem;
+  }
+
+  .admin-header h1 {
+    font-size: 2rem;
+  }
+
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
+}

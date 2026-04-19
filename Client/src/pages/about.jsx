@@ -1,126 +1,134 @@
+import { useNavigate } from "react-router-dom";
 import "./about.css";
 import Navbar from "../components/Navbar";
-import Hero from "../components/Hero";
 import Footer from "../components/Footer";
 
 function About() {
+    const navigate = useNavigate();
+
     return (
-        <>
+        <div className="about-page">
             <Navbar />
-            <div className="about">
 
-                {/* HERO */}
-                <section className="hero">
-                    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945" width="100px" height="100px" />
-                    <div className="hero-overlay">
-                        <h1>About Us</h1>
-                        <p>Our Collection of Luxury Resorts</p>
-                    </div>
-                </section>
+            {/* HERO */}
+            <section className="about-hero">
+                {/* A high-end luxury resort image from Unsplash */}
+                <img
+                    src="https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1920&q=80"
+                    alt="Luxury Resort Horizon"
+                />
+                <div className="about-hero-overlay">
+                    <h1>Our Heritage</h1>
+                    <p>The Pinnacle of Luxury Hospitatlity</p>
+                </div>
+            </section>
 
-                {/* INTRO CENTER TEXT */}
-                <section className="intro">
-                    <h2>OUR COLLECTION OF UNIQUE HOTELS</h2>
+            {/* INTRO OVERLAP */}
+            <section className="about-intro">
+                <h2>Redefining the Art of Travel</h2>
+                <p>
+                    Since our inception, we have set out to create more than just places to stay.
+                    We curate immersive experiences that blend breathtaking architecture,
+                    flawless service, and profound emotional connection. Whether nestled
+                    on pristine private islands or perched high above majestic valleys,
+                    our resorts remain completely dedicated to exceeding your highest expectations.
+                </p>
+            </section>
+
+            {/* STORY SPLIT */}
+            <section className="about-story">
+                <div className="about-story-img">
+                    <img
+                        src="https://images.unsplash.com/photo-1610641818989-c2051b5e2cfd?auto=format&fit=crop&w=1000&q=80"
+                        alt="Resort Architecture"
+                    />
+                </div>
+                <div className="about-story-content">
+                    <h3>The Heart of Our Resorts</h3>
                     <p>
-                        Our platform brings together a handpicked collection of exceptional resorts
-                        and luxury stays from around the world. Each destination is carefully selected
-                        to offer a perfect blend of comfort, elegance, and authentic experiences.
-                        Whether you seek serene beaches, mountain retreats, or cultural escapes,
-                        we ensure every stay creates unforgettable memories.
+                        At the center of every resort lies an unwavering commitment to timeless elegance.
+                        We believe that true luxury is found in the details—from the thread count of our
+                        artisanal linens to the locally-sourced ingredients prepared by Michelin-star culinary
+                        visionaries. Every element is thoughtfully designed so your journey becomes a memory
+                        worth returning to.
                     </p>
-                </section>
+                    <button className="btn-gold" onClick={() => navigate("/resorts")}>Explore Our Resorts</button>
+                </div>
+            </section>
 
-                {/* IMAGE LEFT TEXT RIGHT */}
-                <section className="split">
-                    <div className="split-img">
-                        <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470" />
+            {/* FEATURE GRID */}
+            <section className="about-features">
+                <article className="feature-box">
+                    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80" alt="Bespoke Service" />
+                    <div className="feature-box-text">
+                        <h4>Bespoke Details</h4>
+                        <p>Signature arrivals, express VIP check-in, and uncompromising personalized attention.</p>
                     </div>
-                    <div className="split-text">
-                        <h3>The Heart of Our Resorts</h3>
+                </article>
+
+                <article className="feature-box">
+                    <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=600&q=80" alt="Private Escapes" />
+                    <div className="feature-box-text">
+                        <h4>Private Escapes</h4>
+                        <p>Secluded suites featuring private infinity pools and dedicated concierge service.</p>
+                    </div>
+                </article>
+
+                <article className="feature-box">
+                    <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=600&q=80" alt="Culinary Journeys" />
+                    <div className="feature-box-text">
+                        <h4>Culinary Mastery</h4>
+                        <p>Curated culinary journeys featuring renowned international and local flavors.</p>
+                    </div>
+                </article>
+
+                <article className="feature-box">
+                    <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=600&q=80" alt="Spa & Wellness" />
+                    <div className="feature-box-text">
+                        <h4>Holistic Harmony</h4>
+                        <p>World-class therapeutic spa retreats intended to restore youth and vigor.</p>
+                    </div>
+                </article>
+            </section>
+
+            {/* ZIG-ZAG SECTIONS */}
+            <section className="about-zigzag">
+                {/* Row 1 */}
+                <div className="zigzag-row">
+                    <div className="zigzag-img">
+                        <img src="https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?auto=format&fit=crop&w=900&q=80" alt="Sustainable Travel" />
+                    </div>
+                    <div className="zigzag-text">
+                        <h3>Sustainable Purity</h3>
                         <p>
-                            At the heart of every resort lies a commitment to exceptional hospitality
-                            and timeless elegance. From tranquil beachfront escapes to breathtaking
-                            mountain retreats, each destination is thoughtfully designed to offer
-                            comfort, serenity, and unforgettable experiences. Every detail is crafted
-                            to ensure your stay is not just a visit, but a journey of relaxation and indulgence.
+                            We are fiercely devoted to ecological mindfulness. Our modern building practices minimize
+                            environmental impact while integrating seamlessly into the local flora. From zero-waste
+                            initiatives to 100% renewable energy integration in our newest developments, choosing
+                            us means investing in a greener tomorrow without sacrificing luxury today.
                         </p>
-                        <button>Explore Destinations</button>
                     </div>
-                </section>
+                </div>
 
-                {/* FEATURE GRID */}
-                <section className="features">
-                    <article className="feature-card">
-                        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945" alt="Welcome Amenities" />
-                        <div className="feature-details">
-                            <h3>Welcome Amenities</h3>
-                            <p>Signature gifts, express check-in, and seamless arrival service.</p>
-                        </div>
-                    </article>
+                {/* Row 2 (Reverse) */}
+                <div className="zigzag-row reverse">
+                    <div className="zigzag-img">
+                        <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=900&q=80" alt="Global Community" />
+                    </div>
+                    <div className="zigzag-text">
+                        <h3>A Global Family</h3>
+                        <p>
+                            We embrace the cultural heritage of every location we touch. By partnering with
+                            local artisans, guides, and agricultural producers, our resorts act as a gateway
+                            to authentic community connection. Allow our local experts to guide you into the
+                            pulse of the destination and experience the unseen marvels of local living.
+                        </p>
+                    </div>
+                </div>
+            </section>
 
-                    <article className="feature-card">
-                        <img src="https://images.unsplash.com/photo-1604335399105-a0c585fd81a1" alt="Laundry Services" />
-                        <div className="feature-details">
-                            <h3>Laundry Services</h3>
-                            <p>Doorstep laundry with same-day returns for effortless travel.</p>
-                        </div>
-                    </article>
-
-                    <article className="feature-card">
-                        <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0" alt="Dining Experience" />
-                        <div className="feature-details">
-                            <h3>Dining Experience</h3>
-                            <p>Curated culinary journeys with local and international flavors.</p>
-                        </div>
-                    </article>
-
-                    <article className="feature-card">
-                        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e" alt="Exclusive Offers" />
-                        <div className="feature-details">
-                            <h3>Exclusive Offers</h3>
-                            <p>Member-only packages and seasonal escape promotions.</p>
-                        </div>
-                    </article>
-                </section>
-
-                {/* RESPONSIBLE BUSINESS - ALTERNATING LAYOUT */}
-                <section className="features-alternating">
-                    <article className="feature-row reverse">
-                        <div className="feature-image">
-                            <img src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=800&q=80" alt="Responsible Business" />
-                        </div>
-                        <div className="feature-text">
-                            <h3>Responsible Business</h3>
-                            <p>We are deeply committed to sustainable and responsible tourism practices that respect both nature and local communities. Our resorts are designed to minimize environmental impact while promoting eco-friendly initiatives such as energy conservation, waste reduction, and support for local culture and traditions. By choosing us, you contribute to a greener future.</p>
-                            <button>Discover More</button>
-                        </div>
-                    </article>
-                </section>
-
-                {/* SPA & WELLNESS - ALTERNATING LAYOUT */}
-                <section className="features-alternating">
-                    <article className="feature-row">
-                        <div className="feature-image">
-                            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80" alt="Spa & Wellness" />
-                        </div>
-                        <div className="feature-text">
-                            <h3>Spa & Wellness</h3>
-                            <p>Indulge in a rejuvenating journey where relaxation meets luxury. Our spa and wellness centers offer a range of holistic treatments, from therapeutic massages to revitalizing therapies designed to refresh your body and mind. Surrounded by serene environments, every experience is crafted to restore balance, reduce stress, and elevate your overall well-being.</p>
-                            <button>Discover Wellness</button>
-                        </div>
-                    </article>
-                </section>
-
-                {/* FOOTER CTA */}
-                {/* <section className="cta">
-                    <h2>Subscribe to News & Offers</h2>
-                    <button>Subscribe</button>
-                </section> */}
-
-            </div>
             <Footer />
-        </>
-    )
+        </div>
+    );
 }
 
 export default About;

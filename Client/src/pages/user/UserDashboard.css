@@ -1,0 +1,192 @@
+.dashboard-page-container {
+  display: flex;
+  min-height: 100vh;
+  margin-top: 0;
+  background-color: #f5f7fa;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.dashboard-sidebar {
+  width: 260px;
+  background: white;
+  border-right: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.02);
+  z-index: 10;
+}
+
+.sidebar-header {
+  padding: 30px 20px;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+}
+
+.sidebar-header h3 {
+  margin: 0;
+  font-family: 'Playfair Display', serif;
+  color: #1a1a1a;
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+
+.sidebar-header p {
+  margin: 5px 0 0;
+  color: #888;
+  font-size: 12px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+}
+
+.sidebar-nav button {
+  background: none;
+  border: none;
+  padding: 15px 25px;
+  text-align: left;
+  font-size: 14px;
+  color: #444;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+}
+
+.sidebar-nav button:hover {
+  background: #fdfaf6;
+  color: #f9a826;
+}
+
+.sidebar-nav button.active {
+  background: #fff8eb;
+  color: #f9a826;
+  border-left: 3px solid #f9a826;
+  font-weight: 600;
+}
+
+.sidebar-nav button .icon {
+  margin-right: 15px;
+  font-size: 16px;
+}
+
+.dashboard-main-content {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+}
+
+.dashboard-section {
+  padding: 40px;
+  max-width: 800px;
+}
+
+.dashboard-section h2 {
+  font-family: 'Playfair Display', serif;
+  color: #1a1a1a;
+  margin-top: 0;
+  margin-bottom: 30px;
+  font-size: 28px;
+}
+
+/* Dashboard Overview Cards */
+.overview-cards {
+  display: flex;
+  gap: 20px;
+}
+
+.overview-card {
+  background: white;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  flex: 1;
+  text-align: center;
+  border-top: 3px solid #f9a826;
+}
+
+.overview-card h4 {
+  margin: 0 0 10px;
+  color: #666;
+  font-size: 14px;
+}
+
+.overview-card p {
+  margin: 0;
+  color: #1a1a1a;
+  font-size: 32px;
+  font-weight: 700;
+  font-family: 'Playfair Display', serif;
+}
+
+/* Dashboard Forms */
+.lux-dashboard-form {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+.lux-dashboard-form .form-group {
+  margin-bottom: 25px;
+}
+
+.lux-dashboard-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #333;
+}
+
+.lux-dashboard-form input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.lux-dashboard-form input:focus {
+  border-color: #f9a826;
+  outline: none;
+}
+
+.lux-dashboard-form input:disabled {
+  background: #f9f9f9;
+  color: #888;
+}
+
+.lux-dashboard-form small {
+  display: block;
+  margin-top: 5px;
+  color: #888;
+}
+
+.lux-btn-primary {
+  background: #1a1a1a;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.lux-btn-primary:hover {
+  background: #f9a826;
+}
+
+/* Full Width Section for Bookings Component */
+.dashboard-section-full {
+  width: 100%;
+}

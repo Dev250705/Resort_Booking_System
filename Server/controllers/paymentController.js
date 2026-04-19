@@ -126,3 +126,25 @@ exports.verifyPayment = async (req, res) => {
     res.status(500).json({ message: error?.message || "Payment Verification Failed" });
   }
 };
+
+exports.getMyPayments = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    if (!userId) return res.status(401).json({ message: "Not authenticated" });
+
+    const payments = await Payment.find({ user: userId })
+      .populate({
+        path: "booking",
+        populate: {
+          path: "resort",
+          select: "name location"
+        }
+      })
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ success: true, payments });
+  } catch (error) {
+    console.error("Fetch Payments Error:", error);
+    res.status(500).json({ message: "Failed to fetch payments" });
+  }
+};

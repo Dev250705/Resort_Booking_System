@@ -2,6 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import './payment.css';
 
+/** Razorpay test UPI — mock checkout only succeeds when user enters this ID */
+const MOCK_UPI_SUCCESS = 'success@razorpay';
+
+function getStoredAuthToken() {
+  const raw = sessionStorage.getItem('token');
+  if (!raw) return '';
+  return raw.trim();
+}
+
 export default function Payment() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -25,7 +34,8 @@ export default function Payment() {
 
   const currentGuests = parseInt(formData.guests) || 1;
   const maxRoomGuests = room?.maxGuests || 2;
-  const availableRoomsCount = room?.inventoryCount || 5;
+  const availableRoomsCount =
+    room?.availableInventory ?? room?.inventoryCount ?? 5;
   const maxAllowedGuests = availableRoomsCount * maxRoomGuests;
   const requiredRooms = Math.ceil(currentGuests / maxRoomGuests);
 
@@ -53,14 +63,17 @@ export default function Payment() {
   const [paymentError, setPaymentError] = useState("");
 
   const [showMockUpi, setShowMockUpi] = useState(false);
+  const [mockUpiInput, setMockUpiInput] = useState('');
+  const [mockModalError, setMockModalError] = useState('');
   const [currentMockOrder, setCurrentMockOrder] = useState(null);
   const [currentMockBooking, setCurrentMockBooking] = useState(null);
 
   const handleMockSuccess = async () => {
     try {
+      setMockModalError('');
       setIsProcessing(true);
-      const token = localStorage.getItem("token");
-      const verifyRes = await fetch("http://localhost:5000/api/payments/verify-payment", {
+      const token = getStoredAuthToken();
+      const verifyRes = await fetch(`http://${window.location.hostname}:5000/api/payments/verify-payment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -78,13 +91,26 @@ export default function Payment() {
         throw new Error(verifyData.message || "Payment verification failed.");
       }
       alert("Payment successful. Booking confirmed via UPI.");
-      navigate(`/resort/${resort._id}`);
+      navigate("/bookings");
     } catch (err) {
-      setPaymentError(err.message || "Mock verification failed.");
+      setMockModalError(err.message || "Mock verification failed.");
     } finally {
       setIsProcessing(false);
-      setShowMockUpi(false);
     }
+  };
+
+  const handleMockConfirm = () => {
+    setMockModalError('');
+    const entered = mockUpiInput.trim().toLowerCase();
+    if (!entered) {
+      setMockModalError('Please enter your UPI ID.');
+      return;
+    }
+    if (entered !== MOCK_UPI_SUCCESS.toLowerCase()) {
+      setMockModalError('Invalid UPI ID or payment could not be completed. Please check and try again.');
+      return;
+    }
+    handleMockSuccess();
   };
 
   const updateExtraQuantity = (extraName, delta, e) => {
@@ -194,8 +220,24 @@ export default function Payment() {
     });
   };
 
+  const getSelectedAddonsArray = () => {
+    const arr = [];
+    const stayNights = nights || 1;
+    if (extras.breakfast > 0) arr.push({ title: 'Breakfast', price: extraPrices.breakfast * stayNights, quantity: extras.breakfast });
+    if (extras.lunch > 0) arr.push({ title: 'Lunch', price: extraPrices.lunch * stayNights, quantity: extras.lunch });
+    if (extras.dinner > 0) arr.push({ title: 'Dinner', price: extraPrices.dinner * stayNights, quantity: extras.dinner });
+    if (extras.bbq > 0) arr.push({ title: 'BBQ Bonfire', price: extraPrices.bbq, quantity: extras.bbq });
+    if (extras.spa) arr.push({ title: 'Spa Access', price: extraPrices.spa, quantity: 1 });
+    if (extras.massage) arr.push({ title: 'In-Room Massage', price: extraPrices.massage, quantity: 1 });
+    if (extras.fitness) arr.push({ title: 'Fitness & Yoga', price: extraPrices.fitness, quantity: 1 });
+    if (extras.cabana) arr.push({ title: 'Poolside Cabana', price: extraPrices.cabana, quantity: 1 });
+    if (extras.earlyCheckIn) arr.push({ title: 'Early Check-In', price: extraPrices.earlyCheckIn, quantity: 1 });
+    if (extras.lateCheckOut) arr.push({ title: 'Late Check-Out', price: extraPrices.lateCheckOut, quantity: 1 });
+    return arr;
+  };
+
   const createDraftBooking = async (token) => {
-    const checkoutRes = await fetch("http://localhost:5000/api/bookings/checkout", {
+    const checkoutRes = await fetch(`http://${window.location.hostname}:5000/api/bookings/checkout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -208,6 +250,10 @@ export default function Payment() {
         checkInDate: formData.checkIn,
         checkOutDate: formData.checkOut,
         totalGuests: parseInt(formData.guests, 10) || 1,
+        guestName: `${formData.firstName} ${formData.lastName}`.trim(),
+        guestEmail: formData.email,
+        guestPhone: formData.phone,
+        addons: getSelectedAddonsArray(),
       }),
     });
 
@@ -232,7 +278,7 @@ export default function Payment() {
       return;
     }
 
-    const token = localStorage.getItem("token");
+    const token = getStoredAuthToken();
     if (!token) {
       navigate("/login", { state: { from: "/payment", message: "Please login first" } });
       return;
@@ -243,7 +289,7 @@ export default function Payment() {
 
       const bookingId = await createDraftBooking(token);
 
-      const orderRes = await fetch("http://localhost:5000/api/payments/create-order", {
+      const orderRes = await fetch(`http://${window.location.hostname}:5000/api/payments/create-order`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -263,6 +309,8 @@ export default function Payment() {
       if (orderData.order?.id && orderData.order.id.startsWith("order_MOCK")) {
         setCurrentMockOrder(orderData.order);
         setCurrentMockBooking(bookingId);
+        setMockUpiInput('');
+        setMockModalError('');
         setShowMockUpi(true);
         setIsProcessing(false);
         return;
@@ -307,7 +355,7 @@ export default function Payment() {
         },
         handler: async function (paymentResponse) {
           try {
-            const verifyRes = await fetch("http://localhost:5000/api/payments/verify-payment", {
+            const verifyRes = await fetch(`http://${window.location.hostname}:5000/api/payments/verify-payment`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -320,7 +368,7 @@ export default function Payment() {
               throw new Error(verifyData.message || "Payment verification failed.");
             }
             alert("Payment successful. Booking confirmed.");
-            navigate(`/resort/${resort._id}`);
+            navigate("/bookings");
           } catch (err) {
             setPaymentError(err.message || "Payment done but verification failed.");
           } finally {
@@ -351,7 +399,7 @@ export default function Payment() {
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
           Back to Resort
         </Link>
-        <div className="payment-logo-min">H<span>RESORT HOTEL</span></div>
+        <div className="payment-logo-min">H<span>RESORT</span></div>
       </div>
 
       <form id="checkout-form" onSubmit={handleSubmit}>
@@ -374,19 +422,19 @@ export default function Payment() {
               <div className="form-grid">
                 <div className="input-group">
                   <label>First Name</label>
-                  <input type="text" name="firstName" value={formData.firstName} onChange={handleInputChange} required placeholder="John" />
+                  <input type="text" name="firstName" value={formData.firstName} onChange={handleInputChange} required placeholder="Enter First Name" />
                 </div>
                 <div className="input-group">
                   <label>Last Name</label>
-                  <input type="text" name="lastName" value={formData.lastName} onChange={handleInputChange} required placeholder="Doe" />
+                  <input type="text" name="lastName" value={formData.lastName} onChange={handleInputChange} required placeholder="Enter Last Name" />
                 </div>
                 <div className="input-group">
                   <label>Email Address</label>
-                  <input type="email" name="email" value={formData.email} onChange={handleInputChange} required placeholder="john@example.com" />
+                  <input type="email" name="email" value={formData.email} onChange={handleInputChange} required placeholder="Enter Your Email" />
                 </div>
                 <div className="input-group">
                   <label>Phone Number</label>
-                  <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} required placeholder="+91 98765 43210" />
+                  <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} required placeholder="Enter Your Phone Number" />
                 </div>
               </div>
             </div>
@@ -647,31 +695,53 @@ export default function Payment() {
       {showMockUpi && (
         <div className="upi-mock-overlay" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.7)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className="upi-mock-modal" style={{ background: '#fff', padding: '30px', borderRadius: '12px', width: '380px', textAlign: 'center', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
-            <div style={{ marginBottom: '20px' }}>
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#f7a02d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <span style={{ fontFamily: '"Times New Roman", Times, serif', fontSize: '46px', color: '#0f172a', lineHeight: '1' }}>H</span>
+              <span style={{ fontSize: '11px', fontWeight: 'bold', letterSpacing: '3px', color: '#0f172a', marginTop: '6px' }}>RESORT</span>
             </div>
             <h2 style={{ marginBottom: '10px', color: '#111' }}>Pay via UPI</h2>
             <p style={{ color: '#666', marginBottom: '20px' }}>Secure Fast Checkout</p>
-            
+
             <div style={{ background: '#f5f5f5', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
               <p style={{ margin: 0, fontSize: '14px', color: '#555' }}>Amount to Pay</p>
               <h3 style={{ margin: '5px 0 0', fontSize: '24px', color: '#111' }}>₹{(currentMockOrder?.amount / 100)?.toLocaleString()}</h3>
             </div>
 
-            <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <input type="text" defaultValue="success@razorpay" style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '6px', textAlign: 'center', color: '#444', backgroundColor: '#f9f9f9', outline: 'none' }} />
+            <div style={{ marginBottom: '12px', display: 'flex', flexDirection: 'column', gap: '8px', textAlign: 'left' }}>
+              <label htmlFor="mock-upi-input" style={{ fontSize: '13px', fontWeight: 600, color: '#333' }}>UPI ID</label>
+              <input
+                id="mock-upi-input"
+                type="text"
+                value={mockUpiInput}
+                onChange={(e) => {
+                  setMockUpiInput(e.target.value);
+                  if (mockModalError) setMockModalError('');
+                }}
+                placeholder="Enter your UPI ID"
+                autoComplete="off"
+                style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '6px', color: '#111', backgroundColor: '#fff', outline: 'none', boxSizing: 'border-box' }}
+              />
             </div>
+            {mockModalError && (
+              <p style={{ color: '#ef4444', fontSize: '13px', marginBottom: '14px', textAlign: 'center' }}>{mockModalError}</p>
+            )}
 
-            <button 
+            <button
               type="button"
-              onClick={handleMockSuccess}
-              style={{ width: '100%', padding: '14px', background: '#f7a02d', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer', marginBottom: '10px' }}
+              onClick={handleMockConfirm}
+              disabled={isProcessing}
+              style={{ width: '100%', padding: '14px', background: '#f7a02d', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 'bold', fontSize: '16px', cursor: isProcessing ? 'not-allowed' : 'pointer', marginBottom: '10px', opacity: isProcessing ? 0.85 : 1 }}
             >
-              Verify Payment Success
+              {isProcessing ? 'Confirming…' : 'Confirm payment'}
             </button>
-            <button 
+            <button
               type="button"
-              onClick={() => { setShowMockUpi(false); setPaymentError("Payment cancelled."); }}
+              onClick={() => {
+                setShowMockUpi(false);
+                setMockUpiInput('');
+                setMockModalError('');
+                setPaymentError('Payment cancelled.');
+              }}
               style={{ width: '100%', padding: '14px', background: 'transparent', color: '#666', border: 'none', fontSize: '14px', cursor: 'pointer', textDecoration: 'underline' }}
             >
               Cancel Payment

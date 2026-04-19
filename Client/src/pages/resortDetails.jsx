@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
+import { Heart } from 'lucide-react';
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "./resortDetails.css";
@@ -13,10 +14,61 @@ export default function ResortDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { checkIn, checkOut, guests: searchedGuests } = location.state || {};
+  const { guests: searchedGuests } = location.state || {};
+
+  const today = new Date().toISOString().split("T")[0];
+  const tomorrow = new Date(Date.now() + 86400000).toISOString().split("T")[0];
+
+  const [searchDates, setSearchDates] = useState({
+    checkIn: location.state?.checkIn || today,
+    checkOut: location.state?.checkOut || tomorrow,
+    guests: searchedGuests || 2
+  });
   const [resort, setResort] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isWishlistLoading, setIsWishlistLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchWishlistStatus = async () => {
+      const token = sessionStorage.getItem("token");
+      if (!token) return;
+      try {
+        const res = await fetch("http://localhost:5000/api/users/profile", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.user && data.user.wishlist) {
+          setIsWishlisted(data.user.wishlist.includes(id));
+        }
+      } catch (err) { }
+    };
+    fetchWishlistStatus();
+  }, [id]);
+
+  const toggleWishlist = async () => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      navigate("/login", { state: { from: `/resort/${id}` } });
+      return;
+    }
+    setIsWishlistLoading(true);
+    try {
+      const res = await fetch("http://localhost:5000/api/users/wishlist/toggle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ resortId: id })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setIsWishlisted(data.wishlist.includes(id));
+      }
+    } catch (err) { }
+    finally {
+      setIsWishlistLoading(false);
+    }
+  };
 
   // Room Details Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,24 +89,171 @@ export default function ResortDetails() {
   const [bookError, setBookError] = useState(null);
   const [bookSuccess, setBookSuccess] = useState(false);
 
+  const [reviewsBlock, setReviewsBlock] = useState({
+    loading: true,
+    reviews: [],
+    averageRating: null,
+    reviewCount: 0,
+    error: null,
+  });
+
+  const [reviewWrite, setReviewWrite] = useState({
+    loading: true,
+    eligible: false,
+    bookingId: null,
+    pendingReview: false,
+  });
+  const [rwRating, setRwRating] = useState(5);
+  const [rwComment, setRwComment] = useState("");
+  const [rwError, setRwError] = useState("");
+  const [rwSubmitting, setRwSubmitting] = useState(false);
+
+  const loadReviewsData = useCallback(async () => {
+    if (!id) return;
+    setReviewsBlock((s) => ({ ...s, loading: true, error: null }));
+    try {
+      const r = await fetch(`http://localhost:5000/api/reviews/resort/${id}`);
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.message || "Failed to load reviews");
+      setReviewsBlock({
+        loading: false,
+        reviews: d.reviews || [],
+        averageRating: d.averageRating,
+        reviewCount: d.reviewCount ?? 0,
+        error: null,
+      });
+    } catch (e) {
+      setReviewsBlock({
+        loading: false,
+        reviews: [],
+        averageRating: null,
+        reviewCount: 0,
+        error: e.message || "Could not load reviews",
+      });
+    }
+  }, [id]);
+
+  const loadReviewEligibility = useCallback(async () => {
+    if (!id) return;
+    const token = sessionStorage.getItem("token")?.trim();
+    if (!token) {
+      setReviewWrite({
+        loading: false,
+        eligible: false,
+        bookingId: null,
+        pendingReview: false,
+      });
+      return;
+    }
+    setReviewWrite((s) => ({ ...s, loading: true }));
+    try {
+      const r = await fetch(`http://localhost:5000/api/reviews/eligibility/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const d = await r.json();
+      if (r.status === 401) {
+        setReviewWrite({
+          loading: false,
+          eligible: false,
+          bookingId: null,
+          pendingReview: false,
+        });
+        return;
+      }
+      setReviewWrite({
+        loading: false,
+        eligible: Boolean(d.eligible && d.bookingId),
+        bookingId: d.bookingId || null,
+        pendingReview: Boolean(d.pendingReview),
+      });
+    } catch {
+      setReviewWrite({
+        loading: false,
+        eligible: false,
+        bookingId: null,
+        pendingReview: false,
+      });
+    }
+  }, [id]);
+
+  useEffect(() => {
+    loadReviewsData();
+  }, [loadReviewsData]);
+
+  useEffect(() => {
+    loadReviewEligibility();
+  }, [loadReviewEligibility]);
+
+  const submitResortPageReview = async (e) => {
+    e.preventDefault();
+    if (!reviewWrite.bookingId) return;
+    setRwError("");
+    const text = rwComment.trim();
+    if (text.length < 3) {
+      setRwError("Please write at least 3 characters.");
+      return;
+    }
+    const token = sessionStorage.getItem("token")?.trim();
+    if (!token) {
+      navigate("/login", { state: { from: `/resort/${id}` } });
+      return;
+    }
+    setRwSubmitting(true);
+    try {
+      const response = await fetch("http://localhost:5000/api/reviews", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          bookingId: reviewWrite.bookingId,
+          rating: rwRating,
+          comment: text,
+        }),
+      });
+      const data = await response.json();
+      if (response.status === 401) {
+        navigate("/login", { state: { from: `/resort/${id}` } });
+        return;
+      }
+      if (!response.ok) throw new Error(data.message || "Could not submit review");
+      setRwComment("");
+      setRwRating(5);
+      await loadReviewsData();
+      await loadReviewEligibility();
+      alert(data.message || "Thank you! Your review has been published.");
+    } catch (err) {
+      setRwError(err.message);
+    } finally {
+      setRwSubmitting(false);
+    }
+  };
+
   useEffect(() => {
     const fetchResort = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:5000/api/resorts/${id}`);
+        const qs =
+          searchDates.checkIn && searchDates.checkOut
+            ? `?checkIn=${encodeURIComponent(searchDates.checkIn)}&checkOut=${encodeURIComponent(searchDates.checkOut)}`
+            : "";
+        const response = await fetch(
+          `http://localhost:5000/api/resorts/${id}${qs}`
+        );
         if (!response.ok) throw new Error("Resort details not available");
         const data = await response.json();
-        
+
         // Appending 4-5 high-quality mock images so the UI grid layout shows properly
         if (data && (!data.images || data.images.length < 5)) {
-           const mockImages = [
-             data.images?.[0] || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80",
-             "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800",
-             "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800",
-             "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=800",
-             "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=800"
-           ];
-           data.images = mockImages;
+          const mockImages = [
+            data.images?.[0] || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80",
+            "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800",
+            "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800",
+            "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=800",
+            "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=800"
+          ];
+          data.images = mockImages;
         }
 
         setResort(data);
@@ -68,8 +267,8 @@ export default function ResortDetails() {
     };
 
     fetchResort();
-    window.scrollTo(0,0);
-  }, [id]);
+    window.scrollTo(0, 0);
+  }, [id, searchDates.checkIn, searchDates.checkOut]);
 
   const calculateTotal = () => {
     if (!checkInDate || !checkOutDate || !selectedRoomToBook) return 0;
@@ -80,13 +279,36 @@ export default function ResortDetails() {
     return nights * quantity * selectedRoomToBook.basePrice;
   };
 
+  /** No rooms left for selected dates, or property has zero inventory of this type */
+  const isRoomSoldOut = (room) => {
+    if (searchDates.checkIn && searchDates.checkOut) {
+      return (room.availableInventory ?? 0) <= 0;
+    }
+    return (room.inventoryCount ?? 0) <= 0;
+  };
+
   const handleBookNow = (room) => {
-    const token = localStorage.getItem("token");
+    if (!searchDates.checkIn || !searchDates.checkOut) {
+      alert("Please select both check-in and check-out dates.");
+      return;
+    }
+    if (searchDates.checkIn === searchDates.checkOut) {
+      alert("Enter valid dates: Check-in and Check-out cannot be the same day.");
+      return;
+    }
+    const checkInD = new Date(searchDates.checkIn);
+    const checkOutD = new Date(searchDates.checkOut);
+    if (checkOutD <= checkInD) {
+      alert("Enter valid dates: Check-out must be logically after Check-in.");
+      return;
+    }
+    if (isRoomSoldOut(room)) return;
+    const token = sessionStorage.getItem("token");
     if (!token) {
       navigate("/login", { state: { from: location.pathname + location.search, searchState: location.state } });
       return;
     }
-    navigate("/payment", { state: { resort, room, checkIn, checkOut, guests: searchedGuests } });
+    navigate("/payment", { state: { resort, room, checkIn: searchDates.checkIn, checkOut: searchDates.checkOut, guests: searchDates.guests } });
   };
 
   const loadRazorpayCore = () => {
@@ -105,20 +327,20 @@ export default function ResortDetails() {
     try {
       setBookLoading(true);
       setBookError(null);
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       if (!token) { navigate("/login"); return; }
-      
+
       const response = await fetch("http://localhost:5000/api/bookings/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify({
-           resortId: id, roomTypeTitle: selectedRoomToBook.title, quantity: parseInt(quantity), checkInDate, checkOutDate, totalGuests: parseInt(guests)
+          resortId: id, roomTypeTitle: selectedRoomToBook.title, quantity: parseInt(quantity), checkInDate, checkOutDate, totalGuests: parseInt(guests)
         })
       });
       if (response.status === 401) { navigate("/login"); return; }
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Failed to lock room");
-      
+
       const draftBookingId = data.booking._id;
       const amountToPay = data.booking.totalAmount;
 
@@ -128,27 +350,27 @@ export default function ResortDetails() {
       const orderRes = await fetch("http://localhost:5000/api/payments/create-order", {
         method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }, body: JSON.stringify({ amount: amountToPay, bookingId: draftBookingId })
       });
-      
+
       if (orderRes.status === 401) { navigate("/login"); return; }
       const orderData = await orderRes.json();
       if (!orderRes.ok) throw new Error(orderData.message || "Failed to initiate payment");
 
       if (orderData.order.id.startsWith("order_MOCK")) {
-         setTimeout(async () => {
-             const verifyRes = await fetch("http://localhost:5000/api/payments/verify-payment", {
-               method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-               body: JSON.stringify({ razorpay_order_id: orderData.order.id, razorpay_payment_id: "pay_MOCK12345", razorpay_signature: "mock", bookingId: draftBookingId })
-             });
-             const verifyData = await verifyRes.json();
-             if (verifyRes.ok && verifyData.success) {
-               setBookSuccess(true);
-               setBookLoading(false);
-               setTimeout(() => navigate("/bookings"), 2500); 
-             } else {
-               setBookError("Mock payment verification failed.");
-             }
-         }, 1500);
-         return; 
+        setTimeout(async () => {
+          const verifyRes = await fetch("http://localhost:5000/api/payments/verify-payment", {
+            method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            body: JSON.stringify({ razorpay_order_id: orderData.order.id, razorpay_payment_id: "pay_MOCK12345", razorpay_signature: "mock", bookingId: draftBookingId })
+          });
+          const verifyData = await verifyRes.json();
+          if (verifyRes.ok && verifyData.success) {
+            setBookSuccess(true);
+            setBookLoading(false);
+            setTimeout(() => navigate("/bookings"), 2500);
+          } else {
+            setBookError("Mock payment verification failed.");
+          }
+        }, 1500);
+        return;
       }
 
       const razorpayKeyId = orderData.keyId || import.meta.env.VITE_RAZORPAY_KEY_ID;
@@ -159,27 +381,27 @@ export default function ResortDetails() {
         name: resort?.name || "Booking", description: `Booking for ${selectedRoomToBook.title}`, order_id: orderData.order.id,
         handler: async function (paymentResponse) {
           try {
-             setBookLoading(true);
-             const verifyRes = await fetch("http://localhost:5000/api/payments/verify-payment", {
-               method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-               body: JSON.stringify({ ...paymentResponse, bookingId: draftBookingId })
-             });
-             const verifyData = await verifyRes.json();
-             if (verifyRes.ok && verifyData.success) { setBookSuccess(true); setTimeout(() => navigate("/bookings"), 2500); }
-             else { setBookError("Payment verification failed."); }
-          } catch(err) { setBookError("Network error during verification."); } finally { setBookLoading(false); }
+            setBookLoading(true);
+            const verifyRes = await fetch("http://localhost:5000/api/payments/verify-payment", {
+              method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+              body: JSON.stringify({ ...paymentResponse, bookingId: draftBookingId })
+            });
+            const verifyData = await verifyRes.json();
+            if (verifyRes.ok && verifyData.success) { setBookSuccess(true); setTimeout(() => navigate("/bookings"), 2500); }
+            else { setBookError("Payment verification failed."); }
+          } catch (err) { setBookError("Network error during verification."); } finally { setBookLoading(false); }
         },
         theme: { color: "#f7a02d" }
       };
 
       const razorpayObj = new window.Razorpay(options);
-      razorpayObj.on('payment.failed', function (res){ setBookError(res.error.description || "Payment Failed."); });
+      razorpayObj.on('payment.failed', function (res) { setBookError(res.error.description || "Payment Failed."); });
       razorpayObj.open();
-      
+
     } catch (err) {
       setBookError(err.message);
     } finally {
-      if(!bookSuccess && !String(bookError).includes("MOCK")) setBookLoading(false);
+      if (!bookSuccess && !String(bookError).includes("MOCK")) setBookLoading(false);
     }
   };
 
@@ -207,6 +429,7 @@ export default function ResortDetails() {
     .filter(Boolean)
     .join(", ");
   const mapSrc = `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery || "Luxury Resort")}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
+  const authToken = sessionStorage.getItem("token")?.trim() ?? "";
 
   const openRoomModal = (room) => {
     setSelectedRoom(room);
@@ -246,14 +469,51 @@ export default function ResortDetails() {
       <section className="resort-premium-header">
         <div className="resort-header-text">
           <div className="rh-badge">Premium Resort</div>
-          <h1>{resort.name}</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+            <h1 style={{ margin: 0 }}>{resort.name}</h1>
+            <button
+              onClick={toggleWishlist}
+              disabled={isWishlistLoading}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                padding: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '50%',
+                backgroundColor: isWishlisted ? '#fee2e2' : '#f1f5f9',
+                transition: 'all 0.2s ease',
+              }}
+              title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+            >
+              <Heart
+                size={24}
+                color={isWishlisted ? '#ef4444' : '#64748b'}
+                fill={isWishlisted ? '#ef4444' : 'none'}
+              />
+            </button>
+          </div>
           <p className="resort-location-text">📍 {mapQuery}</p>
+          {!reviewsBlock.loading && reviewsBlock.reviewCount > 0 && (
+            <p className="resort-review-summary" aria-label="Guest rating summary">
+              <span className="rrs-stars" aria-hidden>
+                {"★".repeat(Math.round(reviewsBlock.averageRating || 0))}
+                {"☆".repeat(5 - Math.round(reviewsBlock.averageRating || 0))}
+              </span>
+              <span className="rrs-num">{reviewsBlock.averageRating?.toFixed(1)}</span>
+              <span className="rrs-count">
+                ({reviewsBlock.reviewCount} guest{reviewsBlock.reviewCount === 1 ? "" : "s"})
+              </span>
+            </p>
+          )}
         </div>
         <div className={`resort-gallery-grid count-${Math.min(resort.images?.length || 1, 3)}`}>
           <div className="gallery-main-img" onClick={() => { setCurrentResortImgIdx(0); setIsResortGalleryOpen(true); }}>
-            <img 
-              src={resort.images?.[0] || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80"} 
-              alt="Resort View" 
+            <img
+              src={resort.images?.[0] || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80"}
+              alt="Resort View"
             />
           </div>
           {(resort.images?.length > 1) && (
@@ -307,7 +567,33 @@ export default function ResortDetails() {
         </section>
 
         <section className="rooms-list-container">
-          <h2>Available Rooms</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px', marginBottom: '20px' }}>
+            <h2 style={{ margin: 0 }}>Available Rooms</h2>
+
+            <div style={{ display: 'flex', gap: '15px', background: '#f8fafc', padding: '15px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', marginBottom: '5px' }}>Check-in</label>
+                <input
+                  type="date"
+                  min={today}
+                  value={searchDates.checkIn}
+                  onChange={e => setSearchDates(s => ({ ...s, checkIn: e.target.value }))}
+                  style={{ padding: '8px', border: '1px solid #cbd5e1', borderRadius: '6px' }}
+                />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', marginBottom: '5px' }}>Check-out</label>
+                <input
+                  type="date"
+                  min={searchDates.checkIn || today}
+                  value={searchDates.checkOut}
+                  onChange={e => setSearchDates(s => ({ ...s, checkOut: e.target.value }))}
+                  style={{ padding: '8px', border: '1px solid #cbd5e1', borderRadius: '6px' }}
+                />
+              </div>
+            </div>
+          </div>
+
           <div className="rooms-grid">
             {resort.roomTypes?.length > 0 ? (
               resort.roomTypes.map((room) => (
@@ -316,18 +602,35 @@ export default function ResortDetails() {
                     <img src={room.images?.[0] || resort.images?.[0] || "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800"} alt={room.title} />
                     <div className="view-photos-tag">View Gallery</div>
                   </div>
-                  
+
                   <div className="room-card-content">
                     <h3 className="room-card-title">{room.title}</h3>
-                    
+
                     <div className="room-card-specs">
                       <span><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" /></svg> {room.maxGuests || 2} Guests</span>
                       <span><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM5 19V5h14v14H5z" /></svg> {room.size || 224} sq.ft</span>
                     </div>
 
-                    <div className="rooms-left-badge" style={{color: '#d9534f', fontSize: '13px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px', marginTop: '12px'}}>
-                      <span style={{display: 'inline-block', width: '8px', height: '8px', background: '#d9534f', borderRadius: '50%'}}></span>
-                      Only {room.inventoryCount || 2} room{room.inventoryCount === 1 ? '' : 's'} left at this price
+                    {room.amenities && room.amenities.length > 0 && (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '12px' }}>
+                        {room.amenities.map((feat, idx) => (
+                          <span key={idx} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '4px 8px', borderRadius: '6px', color: '#475569', fontSize: '11px', fontWeight: '600' }}>{feat}</span>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="rooms-left-badge" style={{ color: '#d9534f', fontSize: '13px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px', marginTop: '12px' }}>
+                      <span style={{ display: 'inline-block', width: '8px', height: '8px', background: '#d9534f', borderRadius: '50%' }}></span>
+                      {searchDates.checkIn && searchDates.checkOut ? (
+                        <>
+                          {(room.availableInventory ?? room.inventoryCount ?? 0)} room
+                          {(room.availableInventory ?? room.inventoryCount ?? 0) === 1 ? "" : "s"} available for your dates
+                        </>
+                      ) : (
+                        <>
+                          {room.inventoryCount ?? 2} room{(room.inventoryCount ?? 2) === 1 ? "" : "s"} total
+                        </>
+                      )}
                     </div>
 
                     <div className="room-card-footer">
@@ -335,7 +638,14 @@ export default function ResortDetails() {
                         <strong>₹{(room.basePrice || 0).toLocaleString()}</strong>
                         <span>+ ₹{Math.round(room.basePrice * 0.18).toLocaleString()} taxes/night</span>
                       </div>
-                      <button className="book-room-btn" onClick={() => handleBookNow(room)}>Select Room</button>
+                      <button
+                        type="button"
+                        className="book-room-btn"
+                        disabled={isRoomSoldOut(room)}
+                        onClick={() => handleBookNow(room)}
+                      >
+                        {isRoomSoldOut(room) ? "Sold out" : "Select Room"}
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -343,7 +653,139 @@ export default function ResortDetails() {
             ) : (
               <div className="no-rooms-msg">No room types available for this resort.</div>
             )}
-           </div>
+          </div>
+        </section>
+
+        <section className="resort-reviews-section" aria-labelledby="guest-reviews-heading">
+          <div className="resort-review-write-card">
+            <h2 className="review-write-title">Reviews</h2>
+            <p className="review-write-sub">
+              Everyone can read <strong>approved</strong> guest reviews below. Sign in to submit your
+              own after a completed stay — new reviews are checked by our team before they appear
+              publicly.
+            </p>
+
+            {!reviewWrite.loading && reviewWrite.pendingReview && (
+              <p className="review-pending-banner" role="status">
+                Thanks — your review is <strong>waiting for admin approval</strong>. It will show here
+                once approved.
+              </p>
+            )}
+
+            {!reviewWrite.loading && !authToken && (
+              <div className="review-guest-cta">
+                <p className="review-guest-note">
+                  Sign in to rate this resort after your visit. Submission is only available to guests
+                  with a completed stay.
+                </p>
+                <Link
+                  className="review-signin-btn"
+                  to="/login"
+                  state={{ from: `/resort/${id}` }}
+                >
+                  Sign in to submit a review
+                </Link>
+              </div>
+            )}
+
+            {!reviewWrite.loading &&
+              authToken &&
+              !reviewWrite.eligible &&
+              !reviewWrite.pendingReview && (
+                <p className="review-policy-inline">
+                  You can submit a review here after a <strong>confirmed</strong> stay at this resort,
+                  once check-out has passed (11:00 AM on your check-out day).
+                </p>
+              )}
+
+            {!reviewWrite.loading && reviewWrite.eligible && reviewWrite.bookingId && (
+              <form className="review-write-form" onSubmit={submitResortPageReview}>
+                <h3 className="review-form-inner-title">Write your review</h3>
+                <label className="review-write-label">Rating</label>
+                <div className="review-write-stars" role="group" aria-label="Star rating">
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      className={`review-write-star ${n <= rwRating ? "on" : ""}`}
+                      onClick={() => setRwRating(n)}
+                      aria-label={`${n} star${n === 1 ? "" : "s"}`}
+                    >
+                      ★
+                    </button>
+                  ))}
+                </div>
+                <label className="review-write-label" htmlFor="resort-review-comment">
+                  Your review
+                </label>
+                <textarea
+                  id="resort-review-comment"
+                  className="review-write-textarea"
+                  rows={4}
+                  value={rwComment}
+                  onChange={(e) => setRwComment(e.target.value)}
+                  placeholder="What did you love? Anything others should know?"
+                  maxLength={2000}
+                  required
+                />
+                {rwError && <p className="review-write-error">{rwError}</p>}
+                <button type="submit" className="review-write-submit" disabled={rwSubmitting}>
+                  {rwSubmitting ? "Submitting…" : "Submit for approval"}
+                </button>
+              </form>
+            )}
+          </div>
+
+          <h3 id="guest-reviews-heading" className="guest-reviews-heading">
+            Guest reviews
+          </h3>
+          {reviewsBlock.loading && (
+            <p className="reviews-loading">Loading reviews…</p>
+          )}
+          {!reviewsBlock.loading && reviewsBlock.error && (
+            <p className="reviews-error">{reviewsBlock.error}</p>
+          )}
+          {!reviewsBlock.loading && !reviewsBlock.error && reviewsBlock.reviewCount === 0 && (
+            <p className="reviews-empty">
+              No published reviews yet. Approved guest reviews will appear here.
+            </p>
+          )}
+          {!reviewsBlock.loading && !reviewsBlock.error && reviewsBlock.reviewCount > 0 && (
+            <>
+              <div className="reviews-summary-bar">
+                <span className="reviews-avg">{reviewsBlock.averageRating?.toFixed(1)}</span>
+                <span className="reviews-avg-stars">
+                  {"★".repeat(Math.round(reviewsBlock.averageRating || 0))}
+                  {"☆".repeat(5 - Math.round(reviewsBlock.averageRating || 0))}
+                </span>
+                <span className="reviews-total">
+                  Based on {reviewsBlock.reviewCount} verified stay
+                  {reviewsBlock.reviewCount === 1 ? "" : "s"}
+                </span>
+              </div>
+              <ul className="reviews-list">
+                {reviewsBlock.reviews.map((rev) => (
+                  <li key={rev._id} className="review-card">
+                    <div className="review-card-top">
+                      <strong className="review-author">{rev.userName}</strong>
+                      <span className="review-stars" aria-label={`${rev.rating} out of 5`}>
+                        {"★".repeat(rev.rating)}
+                        {"☆".repeat(5 - rev.rating)}
+                      </span>
+                    </div>
+                    <time className="review-date" dateTime={rev.createdAt}>
+                      {new Date(rev.createdAt).toLocaleDateString(undefined, {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </time>
+                    <p className="review-text">{rev.comment}</p>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </section>
       </div>
 
@@ -363,35 +805,36 @@ export default function ResortDetails() {
                 <button className="go-m-slider-btn right" onClick={nextImg}>&#10095;</button>
               </div>
 
+              <h3>Room Features</h3><br></br>
               <div className="go-modal-specs">
-                <div className="spec-item">
-                  <span className="spec-icon">🛁</span>
-                  <span className="spec-text">Private Bathroom with luxury toiletries</span>
-                </div>
-                <div className="spec-item">
-                  <span className="spec-icon">❄️</span>
-                  <span className="spec-text">Central Air Conditioning</span>
-                </div>
-                <div className="spec-item">
-                  <span className="spec-icon">📺</span>
-                  <span className="spec-text">55" Smart Flat-screen TV</span>
-                </div>
-                <div className="spec-item">
-                  <span className="spec-icon">📶</span>
-                  <span className="spec-text">High-Speed Free WiFi</span>
-                </div>
-                <div className="spec-item">
-                  <span className="spec-icon">☕</span>
-                  <span className="spec-text">Premium Coffee Maker</span>
-                </div>
-                <div className="spec-item">
-                  <span className="spec-icon">🛏️</span>
-                  <span className="spec-text">King Size Cloud Bed</span>
-                </div>
-                <div className="spec-item">
-                  <span className="spec-icon">🛎️</span>
-                  <span className="spec-text">24/7 Room Service</span>
-                </div>
+                {selectedRoom.amenities && selectedRoom.amenities.length > 0 ? (
+                  selectedRoom.amenities.map((feat, idx) => {
+                    const t = feat.toLowerCase();
+                    let icon = '✨';
+                    if (t.includes('wifi') || t.includes('internet')) icon = '📶';
+                    else if (t.includes('tv') || t.includes('television')) icon = '📺';
+                    else if (t.includes('ac') || t.includes('air conditioning') || t.includes('cool')) icon = '❄️';
+                    else if (t.includes('bath') || t.includes('shower') || t.includes('toiletries')) icon = '🛁';
+                    else if (t.includes('coffee') || t.includes('tea')) icon = '☕';
+                    else if (t.includes('bed')) icon = '🛏️';
+                    else if (t.includes('service') || t.includes('desk')) icon = '🛎️';
+                    else if (t.includes('view') || t.includes('balcony')) icon = '🌅';
+                    else if (t.includes('pool')) icon = '🏊';
+
+                    return (
+                      <div className="spec-item" key={idx}>
+                        <span className="spec-icon">{icon}</span>
+                        <span className="spec-text">{feat}</span>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="spec-item" style={{ gridColumn: '1 / -1' }}>
+                    <span className="spec-icon">✨</span>
+                    <span className="spec-text">Standard premium amenities are included. Specific room features will be updated by the administration shortly.</span>
+                  </div>
+                )}
+
                 {selectedRoom.maxGuests && (
                   <div className="spec-item">
                     <span className="spec-icon">👪</span>
@@ -401,8 +844,7 @@ export default function ResortDetails() {
               </div>
 
               <div className="go-modal-section">
-                <h3>Room Features</h3>
-                <p className="go-modal-desc">{selectedRoom.description || "This luxurious room offers premium comfort, stunning views, and top-tier amenities to ensure a relaxing stay."}</p>
+                {/* <p className="go-modal-desc">{selectedRoom.description || "This luxurious room offers premium comfort, stunning views, and top-tier amenities to ensure a relaxing stay."}</p> */}
               </div>
             </div>
           </div>
@@ -442,7 +884,7 @@ export default function ResortDetails() {
           <div className="dr-drawer" onClick={e => e.stopPropagation()}>
             <div className="dr-dw-header">
               <h3>Confirm Booking</h3>
-              <button className="dr-dw-close" onClick={() => setShowDrawer(false)}><Icons.Cross/></button>
+              <button className="dr-dw-close" onClick={() => setShowDrawer(false)}><Icons.Cross /></button>
             </div>
 
             {bookSuccess ? (
@@ -462,7 +904,7 @@ export default function ResortDetails() {
                 </div>
 
                 {bookError && <div className="dr-dw-error">{bookError}</div>}
-                
+
                 <div className="dr-dw-row">
                   <div className="dr-dw-input">
                     <label>Check-in</label>
@@ -478,17 +920,17 @@ export default function ResortDetails() {
                   <div className="dr-dw-input">
                     <label>Rooms</label>
                     <div className="dr-stepper">
-                      <button type="button" onClick={() => setQuantity(q => Math.max(1, q-1))}>-</button>
+                      <button type="button" onClick={() => setQuantity(q => Math.max(1, q - 1))}>-</button>
                       <input type="number" value={quantity} readOnly />
-                      <button type="button" onClick={() => setQuantity(q => Math.min(selectedRoomToBook.inventoryCount || 10, q+1))}>+</button>
+                      <button type="button" onClick={() => setQuantity(q => Math.min((selectedRoomToBook.availableInventory ?? selectedRoomToBook.inventoryCount ?? 10), q + 1))}>+</button>
                     </div>
                   </div>
                   <div className="dr-dw-input">
                     <label>Guests</label>
                     <div className="dr-stepper">
-                      <button type="button" onClick={() => setGuests(g => Math.max(1, g-1))}>-</button>
+                      <button type="button" onClick={() => setGuests(g => Math.max(1, g - 1))}>-</button>
                       <input type="number" value={guests} readOnly />
-                      <button type="button" onClick={() => setGuests(g => Math.min((selectedRoomToBook.maxGuests || 4) * quantity, g+1))}>+</button>
+                      <button type="button" onClick={() => setGuests(g => Math.min((selectedRoomToBook.maxGuests || 4) * quantity, g + 1))}>+</button>
                     </div>
                   </div>
                 </div>

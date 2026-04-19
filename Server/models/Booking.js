@@ -12,9 +12,20 @@ const bookingSchema = new mongoose.Schema({
   checkInDate: { type: Date, required: true },
   checkOutDate: { type: Date, required: true },
   
+  // Guest Info
+  guestName: { type: String },
+  guestEmail: { type: String },
+  guestPhone: { type: String },
+  
   // Financials
   totalGuests: { type: Number, required: true },
   totalAmount: { type: Number, required: true },
+  
+  addons: [{
+    title: { type: String, required: true },
+    price: { type: Number, required: true },
+    quantity: { type: Number, default: 1 }
+  }],
   
   // Concurrency & Status
   status: {

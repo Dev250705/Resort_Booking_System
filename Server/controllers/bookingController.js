@@ -1,9 +1,11 @@
 const Booking = require("../models/Booking");
 const Resort = require("../models/Resort");
+const Review = require("../models/Review");
+const stayPolicy = require("../utils/stayPolicy");
 
 exports.createDraftBooking = async (req, res) => {
   try {
-    const { resortId, roomTypeTitle, quantity, checkInDate, checkOutDate, totalGuests } = req.body;
+    const { resortId, roomTypeTitle, quantity, checkInDate, checkOutDate, totalGuests, addons, guestName, guestEmail, guestPhone } = req.body;
     
     // Auth Middleware will ideally provide `req.user.id`. Using a placeholder if absent.
     const userId = req.user ? req.user.id : req.body.userId;
@@ -44,9 +46,20 @@ exports.createDraftBooking = async (req, res) => {
       });
     }
 
-    // 2. Final Pricing Check Backend-side (Never trust frontend math)
+    // 2. Final Pricing Check Backend-side (Never trust frontend math entirely)
     const nights = (checkOut - checkIn) / (1000 * 60 * 60 * 24);
-    const calculatedAmount = roomTypeParams.basePrice * quantity * nights;
+    let calculatedAmount = roomTypeParams.basePrice * quantity * (nights > 0 ? nights : 1);
+
+    const parsedAddons = addons || [];
+    let addonsTotal = 0;
+    parsedAddons.forEach(addon => {
+      addonsTotal += (addon.price * (addon.quantity || 1));
+    });
+    calculatedAmount += addonsTotal;
+    
+    // Taxes (18%)
+    const taxes = calculatedAmount * 0.18;
+    calculatedAmount += Math.round(taxes);
 
     // 3. Create Draft Booking with Temporary 10-Minute Lock
     const newBooking = new Booking({
@@ -58,6 +71,10 @@ exports.createDraftBooking = async (req, res) => {
       checkOutDate: checkOut,
       totalGuests,
       totalAmount: calculatedAmount,
+      addons: addons || [],
+      guestName,
+      guestEmail,
+      guestPhone,
       status: "Pending_Payment",
       
       // TTL Index kicks in exactly 10 minutes from NOW
@@ -81,11 +98,34 @@ exports.createDraftBooking = async (req, res) => {
 exports.getMyBookings = async (req, res) => {
   try {
     const userId = req.user.id;
-    const bookings = await Booking.find({ user: userId })
+    const bookings = await Booking.find({ 
+      user: userId,
+      status: { $ne: "Pending_Payment" }
+    })
       .populate("resort", "name images location")
       .sort({ createdAt: -1 });
 
-    res.status(200).json({ success: true, bookings });
+    const bookingIds = bookings.map((b) => b._id);
+    const reviewRows =
+      bookingIds.length === 0
+        ? []
+        : await Review.find({ booking: { $in: bookingIds } })
+            .select("booking isApproved")
+            .lean();
+    const reviewByBooking = new Map(
+      reviewRows.map((row) => [String(row.booking), row])
+    );
+
+    const bookingsOut = bookings.map((b) => {
+      const plain = b.toObject();
+      const rev = reviewByBooking.get(String(b._id));
+      plain.hasReview = Boolean(rev);
+      plain.reviewPending = Boolean(rev && !rev.isApproved);
+      plain.reviewApproved = Boolean(rev && rev.isApproved);
+      return plain;
+    });
+
+    res.status(200).json({ success: true, bookings: bookingsOut });
   } catch (error) {
     console.error("Error fetching bookings:", error);
     res.status(500).json({ message: "Server Error fetching user bookings" });
@@ -106,12 +146,73 @@ exports.cancelBooking = async (req, res) => {
       return res.status(400).json({ message: "Booking is already cancelled." });
     }
 
+    if (stayPolicy.isStayCompletedByCheckoutDate(booking.checkOutDate)) {
+      return res.status(400).json({
+        message:
+          "This stay has already ended (check-out was 11:00 AM on your check-out day); it cannot be cancelled.",
+      });
+    }
+
+    if (stayPolicy.isCheckInStartedByCheckInDate(booking.checkInDate)) {
+      return res.status(400).json({
+        message:
+          "Cancellations are not allowed after check-in time (2:00 PM on check-in day), per property policy.",
+      });
+    }
+
+    if (!stayPolicy.canUserCancelBooking(booking)) {
+      return res.status(400).json({ message: "This booking cannot be cancelled." });
+    }
+
+    const cancellationPenaltyApplies =
+      stayPolicy.isWithin48HoursBeforePolicyCheckIn(booking.checkInDate);
+
     booking.status = "Cancelled";
     await booking.save();
 
-    res.status(200).json({ success: true, message: "Booking successfully cancelled." });
+    res.status(200).json({
+      success: true,
+      message: "Booking successfully cancelled.",
+      cancellationPenaltyApplies,
+    });
   } catch (error) {
     console.error("Error cancelling booking:", error);
     res.status(500).json({ message: "Server Error cancelling the booking." });
+  }
+};
+
+exports.getAllBookings = async (req, res) => {
+  try {
+    const bookings = await Booking.find()
+      .populate("resort", "name location")
+      .populate("user", "name email phone")
+      .sort({ createdAt: -1 });
+    res.status(200).json({ success: true, bookings });
+  } catch (error) {
+    console.error("Error fetching all bookings for admin:", error);
+    res.status(500).json({ message: "Server Error fetching bookings" });
+  }
+};
+
+exports.adminUpdateBookingStatus = async (req, res) => {
+  try {
+    const bookingId = req.params.id;
+    const { status } = req.body;
+    
+    if (!["Confirmed", "Cancelled", "Pending_Payment", "Completed"].includes(status)) {
+      return res.status(400).json({ message: "Invalid status update" });
+    }
+
+    const booking = await Booking.findById(bookingId);
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    booking.status = status;
+    await booking.save();
+    res.status(200).json({ success: true, message: `Booking marked as ${status}` });
+  } catch (error) {
+    console.error("Error updating booking status:", error);
+    res.status(500).json({ message: "Server error updating status" });
   }
 };

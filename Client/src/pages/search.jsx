@@ -20,7 +20,7 @@ export default function Search() {
     const fetchResorts = async () => {
       try {
         setLoading(true);
-        const response = await fetch("http://localhost:5000/api/resorts");
+        const response = await fetch(`http://${window.location.hostname}:5000/api/resorts`);
         const data = await response.json();
         setResorts(data);
       } catch (err) {
@@ -108,7 +108,11 @@ export default function Search() {
 
                 return (
                   <div className="search-card" key={resort._id}>
-                    <div className="search-card-img">
+                    <div 
+                      className="search-card-img"
+                      onClick={() => navigate(`/resort/${resort._id}`)}
+                      style={{ cursor: 'pointer' }}
+                    >
                       <img src={imageUrl} alt={resort.name} />
                       {startingPrice && <div className="search-card-price">From ₹{startingPrice}</div>}
                     </div>

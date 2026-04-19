@@ -13,6 +13,7 @@ function Home() {
   const [children, setChildren] = useState(0);
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
+  const [locationQuery, setLocationQuery] = useState("");
   const [showGuests, setShowGuests] = useState(false);
 
   const heroSlides = [
@@ -27,9 +28,13 @@ function Home() {
   ];
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/resorts")
+    fetch(`http://${window.location.hostname}:5000/api/resorts`)
       .then((res) => res.json())
-      .then((data) => setResorts(data))
+      .then((data) => {
+        // Backend already sorts by newest first (_id: -1), just limit to top 9
+        const recentNine = data.slice(0, 6);
+        setResorts(recentNine);
+      })
       .catch((err) => console.log(err));
   }, []);
 
@@ -55,36 +60,36 @@ function Home() {
     <>
       <Navbar />
       <main className="theme-orange-home">
-        
+
         {/* HERO SECTION MATCHING MOCKUP */}
         <section className="theme-hero">
-          <div 
+          <div
             key={currentSlide}
-            className="theme-hero-bg" 
+            className="theme-hero-bg"
             style={{ backgroundImage: `url(${heroSlides[currentSlide].image})` }}
           >
             <div className="theme-overlay"></div>
           </div>
-          
+
           <button className="theme-arrow left-arrow" onClick={handlePrev}>&lang;</button>
-          
+
           <div className="theme-hero-content">
             <h1>{heroSlides[currentSlide].title}</h1>
-            <button className="theme-book-btn">BOOK NOW</button>
+            {/* <button className="theme-book-btn">BOOK NOW</button> */}
           </div>
-          
+
           <button className="theme-arrow right-arrow" onClick={handleNext}>&rang;</button>
         </section>
 
         {/* BOOKING SEARCH BAR */}
         <div className="home-search-wrapper">
-          <form className="home-search-form" onSubmit={(e) => { 
-            e.preventDefault(); 
-            navigate('/rooms', { state: { checkIn, checkOut, guests: adults + children } }); 
+          <form className="home-search-form" onSubmit={(e) => {
+            e.preventDefault();
+            navigate('/resorts', { state: { checkIn, checkOut, guests: adults + children, locationQuery } });
           }}>
             <div className="search-field">
               <label>Location</label>
-              <input type="text" placeholder="Where do you want to go?" />
+              <input type="text" placeholder="Where do you want to go?" value={locationQuery} onChange={e => setLocationQuery(e.target.value)} />
             </div>
             <div className="search-field">
               <label>Check-in</label>
@@ -94,16 +99,16 @@ function Home() {
               <label>Check-out</label>
               <input type="date" min={checkIn || today} value={checkOut} onChange={e => setCheckOut(e.target.value)} />
             </div>
-            
+
             <div className="search-field guest-field" style={{ position: 'relative' }}>
               <label>Guests</label>
-              <div 
+              <div
                 className="guest-selector-display"
                 onClick={() => setShowGuests(!showGuests)}
               >
                 {adults} Adult{adults !== 1 ? 's' : ''}, {children} Child{children !== 1 ? 'ren' : ''}
               </div>
-              
+
               {showGuests && (
                 <div className="guest-dropdown">
                   <div className="guest-row">
@@ -145,12 +150,16 @@ function Home() {
               // Calculate starting price if rooms exist
               const prices = resort.roomTypes?.map(r => r.basePrice) || [];
               const startingPrice = prices.length > 0 ? Math.min(...prices) : null;
-              
+
               const imageUrl = resort.images?.[0] || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80";
 
               return (
                 <div className="popular-card" key={resort._id || index}>
-                  <div className="popular-card-img">
+                  <div 
+                    className="popular-card-img" 
+                    onClick={() => navigate(`/resort/${resort._id}`, { state: { checkIn, checkOut, guests: adults + children } })}
+                    style={{ cursor: 'pointer' }}
+                  >
                     <img src={imageUrl} alt={resort.name} />
                     {startingPrice && <div className="price-tag">From ₹{startingPrice}</div>}
                   </div>
@@ -159,8 +168,8 @@ function Home() {
                     <div className="stars">
                       {'★'.repeat(Math.max(1, Math.round(resort.rating || 5)))}{'☆'.repeat(5 - Math.max(1, Math.round(resort.rating || 5)))}
                     </div>
-                    <div style={{color: '#666', fontSize: '14px', marginBottom: '15px'}}>
-                        📍 {resort.location?.city || "Unknown Location"}
+                    <div style={{ color: '#666', fontSize: '14px', marginBottom: '15px' }}>
+                      📍 {resort.location?.city || "Unknown Location"}
                     </div>
                     <div className="card-footer-flex">
                       <div className="duration">🚪 {resort.roomTypes?.length || 0} Room Types</div>

@@ -123,17 +123,128 @@
   color: #f9a826;
 }
 
+/* Right Side Actions */
+.nav-right-actions {
+  display: flex;
+  align-items: stretch; /* Stretch children to fill the height */
+  height: 100%;
+}
+
 .nav-search-btn {
-  background-color: #f9a826; /* Orange Theme */
+  background-color: rgba(255, 255, 255, 0.05); /* subtle background instead of orange */
   border: none;
+  border-left: 1px solid rgba(255,255,255,0.1);
   width: 60px;
-  height: 60px;
+  height: 100%;
   cursor: pointer;
   color: white;
   font-size: 18px;
   transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav-search-btn:hover {
-  background-color: #df9118;
+  background-color: rgba(255,255,255,0.15);
+  color: #f9a826;
+}
+
+/* --- Dropdown Styles --- */
+.nav-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  cursor: pointer;
+}
+
+.dropdown-toggle {
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  transition: 0.3s;
+}
+
+.nav-dropdown:hover .dropdown-toggle {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f9a826;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  min-width: 180px;
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(15px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  border-top: 3px solid #f9a826;
+  padding: 10px 0;
+}
+
+.nav-dropdown:hover .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-menu a {
+  color: #1a1a1a !important;
+  font-size: 12px;
+  padding: 12px 25px;
+  height: auto !important;
+  display: block;
+}
+
+.dropdown-menu a:hover {
+  background: #f8f8f8 !important;
+  color: #f9a826 !important;
+  padding-left: 30px; /* subtle slide effect */
+}
+
+.user-dropdown .dropdown-menu {
+  left: auto;
+  right: 0;
+}
+
+/* User Icon Styling */
+.user-icon {
+  font-size: 18px;
+  margin-right: 8px;
+}
+
+/* CTA "BOOK NOW" Button in Navbar */
+.nav-cta-btn {
+  background: #f9a826 !important;
+  color: white !important;
+  padding: 0 30px !important;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  height: 100%;
+  transition: background 0.3s ease;
+}
+
+.nav-cta-btn:hover {
+  background: #df9118 !important;
+  color: white !important;
 }

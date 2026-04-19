@@ -1,27 +1,111 @@
 .card {
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
   background: white;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-  transition: 0.3s;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
 }
 
 .card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+  border-color: #e2e8f0;
+}
+
+.card-img-container {
+  overflow: hidden;
+  position: relative;
+  height: 220px;
 }
 
 .card img {
   width: 100%;
-  height: 180px;
+  height: 100%;
   object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.card:hover img {
+  transform: scale(1.08);
+}
+
+.card-price-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  backdrop-filter: blur(4px);
+}
+
+.card-price-badge .text-small {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.card-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .card h3 {
-  padding: 10px;
+  margin: 0 0 8px 0;
   font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
 }
 
-.card p {
-  padding: 0 10px 10px;
-  color: #555;
+.resort-location {
+  margin: 0 0 16px 0;
+  color: #64748b;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.card-bottom {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 15px;
+}
+
+.card-rating {
+  font-weight: 600;
+  color: #f59e0b;
+  font-size: 14px;
+}
+
+.card-book-btn {
+  background: #f7a02d;
+  color: white;
+  text-decoration: none;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(247, 160, 45, 0.3);
+}
+
+.card-book-btn:hover {
+  background: #e48f1f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(247, 160, 45, 0.4);
 }

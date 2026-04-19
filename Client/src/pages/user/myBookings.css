@@ -1,397 +1,413 @@
-.bookings-page-wrapper {
-  background-color: #f7f9fc;
-  min-height: 100vh;
-  font-family: 'Inter', sans-serif;
-  padding-bottom: 80px;
-}
+  .bookings-page-wrapper {
+    background-color: #f7f9fc;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    padding-bottom: 80px;
+  }
 
-.my-bookings-ultra-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 140px 20px 20px;
-}
+  .my-bookings-ultra-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 140px 20px 20px;
+  }
 
-.bookings-hero {
-  margin-bottom: 40px;
-  text-align: left;
-}
+  .bookings-hero {
+    margin-bottom: 40px;
+    text-align: left;
+  }
 
-.hero-content h1 {
-  font-size: 46px;
-  font-weight: 800;
-  color: #0b1c3d;
-  margin-bottom: 10px;
-  letter-spacing: -1.5px;
-}
+  .hero-content h1 {
+    font-size: 46px;
+    font-weight: 800;
+    color: #0b1c3d;
+    margin-bottom: 10px;
+    letter-spacing: -1.5px;
+  }
 
-.hero-content p {
-  font-size: 18px;
-  color: #64748b;
-  font-weight: 400;
-}
+  .hero-content p {
+    font-size: 18px;
+    color: #64748b;
+    font-weight: 400;
+  }
 
-.bookings-tabs {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 40px;
-  border-bottom: 1px solid #e2e8f0;
-  padding-bottom: 15px;
-}
+  .bookings-tabs {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 40px;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 15px;
+  }
 
-.tab-btn {
-  background: transparent;
-  border: none;
-  font-size: 16px;
-  font-weight: 600;
-  color: #64748b;
-  padding: 10px 20px;
-  cursor: pointer;
-  border-radius: 30px;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+  .tab-btn {
+    background: transparent;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    color: #64748b;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
 
-.tab-btn:hover {
-  color: #0b1c3d;
-  background: #f1f5f9;
-}
+  .tab-btn:hover {
+    color: #0b1c3d;
+    background: #f1f5f9;
+  }
 
-.tab-btn.active {
-  background: #0b1c3d;
-  color: #fff;
-  box-shadow: 0 4px 15px rgba(11, 28, 61, 0.2);
-}
+  .tab-btn.active {
+    background: #0b1c3d;
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(11, 28, 61, 0.2);
+  }
 
-.tab-btn .badge {
-  background: rgba(255,255,255,0.2);
-  padding: 2px 8px;
-  border-radius: 20px;
-  font-size: 12px;
-}
+  .tab-btn .badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 12px;
+  }
 
-.tab-btn:not(.active) .badge {
-  background: #e2e8f0;
-  color: #475569;
-}
+  .tab-btn:not(.active) .badge {
+    background: #e2e8f0;
+    color: #475569;
+  }
 
-.lux-booking-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 40px;
-}
+  .lux-booking-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
 
-.lux-booking-card {
-  display: flex;
-  background: #fff;
-  border-radius: 24px;
-  overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
-}
-
-.lux-booking-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
-}
-
-.lux-booking-image {
-  flex: 0 0 40%;
-  position: relative;
-  overflow: hidden;
-}
-
-.lux-booking-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.6s ease;
-}
-
-.lux-booking-card:hover .lux-booking-image img {
-  transform: scale(1.03);
-}
-
-.lux-status-badge {
-  position: absolute;
-  top: 25px;
-  left: 25px;
-  padding: 8px 18px;
-  border-radius: 30px;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  backdrop-filter: blur(10px);
-}
-
-.status-Confirmed {
-  background: rgba(30, 255, 110, 0.85);
-  color: #004d1a;
-}
-.status-Pending, .status-Pending_Payment {
-  background: rgba(255, 215, 0, 0.85);
-  color: #665200;
-}
-.status-Cancelled {
-  background: rgba(255, 60, 60, 0.85);
-  color: #fff;
-}
-
-.lux-booking-content {
-  flex: 1;
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.lux-resort-title h2 {
-  font-size: 28px;
-  font-weight: 800;
-  color: #0b1c3d;
-  margin: 0 0 8px 0;
-}
-
-.lux-resort-title p {
-  color: #64748b;
-  font-size: 15px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin: 0;
-}
-
-.lux-stay-dates {
-  display: flex;
-  align-items: center;
-  margin: 30px 0;
-  background: #f8fafc;
-  padding: 20px 30px;
-  border-radius: 16px;
-  border: 1px solid #e2e8f0;
-}
-
-.date-block {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-.date-block span {
-  font-size: 12px;
-  color: #94a3b8;
-  font-weight: 600;
-  letter-spacing: 1px;
-  margin-bottom: 6px;
-}
-
-.date-block strong {
-  font-size: 18px;
-  color: #0f172a;
-}
-
-.text-right {
-  text-align: right;
-}
-
-.date-divider {
-  width: 40px;
-  height: 2px;
-  background: #cbd5e1;
-  position: relative;
-}
-
-.date-divider::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: -4px;
-  border: solid #cbd5e1;
-  border-width: 0 2px 2px 0;
-  display: inline-block;
-  padding: 4px;
-  transform: rotate(-45deg);
-}
-
-.lux-booking-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  border-top: 1px solid #f1f5f9;
-  padding-top: 25px;
-}
-
-.lux-price-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.lux-price-label {
-  font-size: 13px;
-  color: #64748b;
-  margin-bottom: 4px;
-}
-
-.lux-price-value {
-  font-size: 32px;
-  font-weight: 800;
-  color: #f7a02d;
-  line-height: 1;
-}
-
-.lux-room-type {
-  font-size: 14px;
-  color: #64748b;
-  margin-top: 8px;
-}
-
-.lux-actions {
-  display: flex;
-  gap: 15px;
-}
-
-.lux-btn-cancel {
-  background: #fff0f0;
-  color: #dc2626;
-  border: 1px solid #fecaca;
-  padding: 12px 24px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.lux-btn-cancel:hover:not(:disabled) {
-  background: #fee2e2;
-}
-
-.lux-btn-cancel:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.lux-btn-outline {
-  padding: 12px 24px;
-  background: #fff;
-  color: #0b1c3d;
-  border: 1px solid #cbd5e1;
-  border-radius: 12px;
-  font-weight: 600;
-  text-decoration: none;
-  font-size: 14px;
-  transition: all 0.2s ease;
-}
-
-.lux-btn-outline:hover {
-  background: #f8fafc;
-  border-color: #94a3b8;
-}
-
-.lux-empty-state {
-  text-align: center;
-  padding: 100px 20px;
-  background: #fff;
-  border-radius: 24px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.02);
-}
-
-.empty-icon-ring {
-  width: 80px;
-  height: 80px;
-  background: #f1f5f9;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 25px;
-  color: #94a3b8;
-}
-
-.lux-empty-state h2 {
-  font-size: 26px;
-  color: #0f172a;
-  margin-bottom: 10px;
-}
-
-.lux-empty-state p {
-  color: #64748b;
-  margin-bottom: 30px;
-}
-
-.lux-btn-primary {
-  display: inline-block;
-  padding: 14px 32px;
-  background: #f7a02d;
-  color: #fff;
-  font-weight: 700;
-  border-radius: 30px;
-  text-decoration: none;
-  box-shadow: 0 10px 20px rgba(247, 160, 45, 0.2);
-  transition: all 0.3s ease;
-}
-
-.lux-btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 15px 25px rgba(247, 160, 45, 0.3);
-}
-
-.lux-loader-container {
-  display: flex;
-  justify-content: center;
-  padding: 100px 0;
-}
-
-.lux-spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid #f1f5f9;
-  border-top-color: #f7a02d;
-  border-radius: 50%;
-  animation: spin 1s infinite linear;
-}
-
-.lux-error {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  background: #fef2f2;
-  color: #991b1b;
-  padding: 20px;
-  border-radius: 12px;
-  border: 1px solid #fecaca;
-  margin-top: 40px;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-@media (max-width: 900px) {
   .lux-booking-card {
-    flex-direction: column;
+    display: flex;
+    background: #fff;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
   }
+
+  .lux-booking-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
+  }
+
   .lux-booking-image {
-    height: 250px;
+    flex: 0 0 35%;
+    position: relative;
+    overflow: hidden;
+    /* Ensure a minimum height so it doesn't collapse if text is very short */
+    min-height: 280px;
   }
+
+  .lux-booking-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+
+  .lux-booking-card:hover .lux-booking-image img {
+    transform: scale(1.05);
+  }
+
+  .lux-status-badge {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    padding: 8px 18px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    backdrop-filter: blur(10px);
+  }
+
+  .status-Confirmed {
+    background: rgba(30, 255, 110, 0.85);
+    color: #004d1a;
+  }
+
+  .status-Pending,
+  .status-Pending_Payment {
+    background: rgba(255, 215, 0, 0.85);
+    color: #665200;
+  }
+
+  .status-Cancelled {
+    background: rgba(255, 60, 60, 0.85);
+    color: #fff;
+  }
+
   .lux-booking-content {
-    padding: 30px 20px;
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
+
+  .lux-resort-title h2 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #0b1c3d;
+    margin: 0 0 8px 0;
+  }
+
+  .lux-resort-title p {
+    color: #64748b;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+  }
+
+  .lux-stay-dates {
+    display: flex;
+    align-items: center;
+    margin: 30px 0;
+    background: #f8fafc;
+    padding: 20px 30px;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+  }
+
+  .date-block {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .date-block span {
+    font-size: 12px;
+    color: #94a3b8;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+
+  .date-block strong {
+    font-size: 18px;
+    color: #0f172a;
+  }
+
+  .text-right {
+    text-align: right;
+  }
+
+  .date-divider {
+    width: 40px;
+    height: 2px;
+    background: #cbd5e1;
+    position: relative;
+  }
+
+  .date-divider::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -4px;
+    border: solid #cbd5e1;
+    border-width: 0 2px 2px 0;
+    display: inline-block;
+    padding: 4px;
+    transform: rotate(-45deg);
+  }
+
   .lux-booking-footer {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 25px;
   }
+
+  .lux-price-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .lux-price-label {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 4px;
+  }
+
+  .lux-price-value {
+    font-size: 32px;
+    font-weight: 800;
+    color: #f7a02d;
+    line-height: 1;
+  }
+
+  .lux-room-type {
+    font-size: 14px;
+    color: #64748b;
+    margin-top: 8px;
+  }
+
   .lux-actions {
-    width: 100%;
-    flex-direction: column;
+    display: flex;
+    gap: 15px;
   }
-  .lux-btn-cancel, .lux-btn-outline {
-    width: 100%;
+
+  .lux-btn-cancel {
+    background: #fff0f0;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .lux-btn-cancel:hover:not(:disabled) {
+    background: #fee2e2;
+  }
+
+  .lux-btn-cancel:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .lux-btn-outline {
+    padding: 12px 24px;
+    background: #fff;
+    color: #0b1c3d;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.2s ease;
+  }
+
+  .lux-btn-outline:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+  }
+
+  .lux-empty-state {
     text-align: center;
+    padding: 100px 20px;
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
   }
-}
+
+  .empty-icon-ring {
+    width: 80px;
+    height: 80px;
+    background: #f1f5f9;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 25px;
+    color: #94a3b8;
+  }
+
+  .lux-empty-state h2 {
+    font-size: 26px;
+    color: #0f172a;
+    margin-bottom: 10px;
+  }
+
+  .lux-empty-state p {
+    color: #64748b;
+    margin-bottom: 30px;
+  }
+
+  .lux-btn-primary {
+    display: inline-block;
+    padding: 14px 32px;
+    background: #f7a02d;
+    color: #fff;
+    font-weight: 700;
+    border-radius: 30px;
+    text-decoration: none;
+    box-shadow: 0 10px 20px rgba(247, 160, 45, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .lux-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 25px rgba(247, 160, 45, 0.3);
+  }
+
+  .lux-loader-container {
+    display: flex;
+    justify-content: center;
+    padding: 100px 0;
+  }
+
+  .lux-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #f1f5f9;
+    border-top-color: #f7a02d;
+    border-radius: 50%;
+    animation: spin 1s infinite linear;
+  }
+
+  .lux-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #fef2f2;
+    color: #991b1b;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #fecaca;
+    margin-top: 40px;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .lux-booking-card {
+      flex-direction: column;
+    }
+
+    .lux-booking-image {
+      height: 250px;
+    }
+
+    .lux-booking-content {
+      padding: 30px 20px;
+    }
+
+    .lux-booking-footer {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 20px;
+    }
+
+    .lux-actions {
+      width: 100%;
+      flex-direction: column;
+    }
+
+    .lux-btn-cancel,
+    .lux-btn-outline {
+      width: 100%;
+      text-align: center;
+    }
+  }

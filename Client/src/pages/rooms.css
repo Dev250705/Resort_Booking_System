@@ -20,7 +20,7 @@
   width: 100%;
   overflow-x: hidden;
   background: var(--light-bg);
-  padding-top: 170px; /* Accounts for the fixed Navbar height */
+  padding-top: 120px; /* Accounts for the fixed Navbar height */
 }
 
 

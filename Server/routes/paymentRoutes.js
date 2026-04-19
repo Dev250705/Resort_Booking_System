@@ -1,23 +1,10 @@
 const express = require("express");
 const router = express.Router();
- const paymentController = require("../controllers/paymentController");
+const paymentController = require("../controllers/paymentController");
+const { authMiddleware } = require("../middleware/authMiddleware");
 
-// fallback simple middleware if project authMiddleware structure is different
-const authCheck = (req, res, next) => {
-  const jwt = require("jsonwebtoken");
-  let token = req.headers.authorization;
-  if (!token) return res.status(401).json({ message: "Unauthorized" });
-  if (token.startsWith("Bearer ")) token = token.split(" ")[1];
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (ex) {
-    return res.status(401).json({ message: "Invalid token" });
-  }
-};
-
-router.post("/create-order", authCheck, paymentController.createOrder);
-router.post("/verify-payment", authCheck, paymentController.verifyPayment);
+router.post("/create-order", authMiddleware, paymentController.createOrder);
+router.post("/verify-payment", authMiddleware, paymentController.verifyPayment);
+router.get("/my-payments", authMiddleware, paymentController.getMyPayments);
 
 module.exports = router;

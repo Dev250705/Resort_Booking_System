@@ -19,6 +19,7 @@ export default function Rooms() {
   const navigate = useNavigate();
   const location = useLocation();
   const searchState = location.state || {};
+  const { checkIn: roomsCheckIn, checkOut: roomsCheckOut, guests: roomsGuests, locationQuery } = searchState;
 
   const filters = ["All", "Luxury", "Deluxe", "Standard", "Economy", "Suite"];
 
@@ -26,17 +27,54 @@ export default function Rooms() {
     const fetchResorts = async () => {
       try {
         setLoading(true);
-        const response = await fetch("http://localhost:5000/api/resorts");
+        
+        const qs = new URLSearchParams();
+        if (roomsCheckIn && roomsCheckOut) {
+           qs.append('checkIn', roomsCheckIn);
+           qs.append('checkOut', roomsCheckOut);
+           if (roomsGuests) {
+               qs.append('guests', roomsGuests);
+               qs.append('rooms', '1');
+           }
+        }
+        const url = qs.toString() 
+             ? `http://${window.location.hostname}:5000/api/resorts?${qs.toString()}` 
+             : `http://${window.location.hostname}:5000/api/resorts`;
+
+        const response = await fetch(url);
         if (!response.ok) {
           throw new Error("Failed to fetch resorts");
         }
         const data = await response.json();
-        setResorts(data);
-        setFilteredResorts(data);
+
+        const getImageUrl = (url) => url?.startsWith('/uploads') ? `http://${window.location.hostname}:5000${url}` : url;
+        const mappedData = Array.isArray(data) ? data.map(resort => {
+          if (resort.images) resort.images = resort.images.map(getImageUrl);
+          if (resort.roomTypes) {
+            resort.roomTypes = resort.roomTypes.map(rt => {
+               if (rt.images) rt.images = rt.images.map(getImageUrl);
+               return rt;
+            });
+          }
+          return resort;
+        }) : [];
+
+        if (locationQuery && typeof locationQuery === "string" && locationQuery.trim() !== "") {
+            const lowerQ = locationQuery.toLowerCase();
+            mappedData = mappedData.filter(r => {
+                const n = r.name ? String(r.name).toLowerCase() : "";
+                const c = r.location?.city ? String(r.location.city).toLowerCase() : "";
+                const s = r.location?.state ? String(r.location.state).toLowerCase() : "";
+                return n.includes(lowerQ) || c.includes(lowerQ) || s.includes(lowerQ);
+            });
+        }
+
+        setResorts(mappedData);
+        setFilteredResorts(mappedData);
         setError(null);
       } catch (err) {
         console.error("Error fetching resorts:", err);
-        setError("Unable to load rooms. Please try again later.");
+        setError("Unable to load rooms. Please try again later. Error: " + err.message);
       } finally {
         setLoading(false);
       }
@@ -54,7 +92,13 @@ export default function Rooms() {
     const fetchResortDetails = async () => {
       setDetailLoading(true);
       try {
-        const response = await fetch(`http://localhost:5000/api/resorts/${resortId}`);
+        const qs =
+          roomsCheckIn && roomsCheckOut
+            ? `?checkIn=${encodeURIComponent(roomsCheckIn)}&checkOut=${encodeURIComponent(roomsCheckOut)}`
+            : "";
+        const response = await fetch(
+          `http://${window.location.hostname}:5000/api/resorts/${resortId}${qs}`
+        );
         if (!response.ok) {
           throw new Error("Resort not found");
         }
@@ -70,7 +114,7 @@ export default function Rooms() {
     };
 
     fetchResortDetails();
-  }, [resortId]);
+  }, [resortId, roomsCheckIn, roomsCheckOut]);
 
   const handleFilterClick = (filter) => {
     setActiveFilter(filter.toLowerCase());
@@ -225,7 +269,11 @@ export default function Rooms() {
                   <p>{room.description || "Comfortable stay with included amenities."}</p>
                   <div className="room-stats">
                     <span>Guests: {room.maxGuests || "-"}</span>
-                    <span>Available: {room.inventoryCount ?? "-"}</span>
+                    <span>
+                      Available:{" "}
+                      {room.availableInventory ?? room.inventoryCount ?? "-"}
+                      {roomsCheckIn && roomsCheckOut ? " (your dates)" : ""}
+                    </span>
                   </div>
                   <div className="room-price">₹{room.basePrice || "-"} / night</div>
                 </div>
@@ -263,23 +311,7 @@ export default function Rooms() {
 
 
 
-      {/* Filter Section */}
-      <section className="filter-section">
-        <div className="filter-container">
-          <div className="filters">
-            {filters.map((filter) => (
-              <button
-                key={filter}
-                className={`filter-btn ${activeFilter === filter.toLowerCase() ? "active" : ""
-                  }`}
-                onClick={() => handleFilterClick(filter)}
-              >
-                {filter}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       {/* Gallery Section */}
       <section className="gallery-section">

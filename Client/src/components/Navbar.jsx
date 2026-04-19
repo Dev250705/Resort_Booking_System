@@ -2,13 +2,25 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./Navbar.css";
 
+function isAdminFromToken() {
+  const t = sessionStorage.getItem("token")?.trim();
+  if (!t) return false;
+  try {
+    const p = JSON.parse(atob(t.split(".")[1]));
+    return p.role === "admin";
+  } catch {
+    return false;
+  }
+}
+
 export default function Navbar() {
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
+  const isAdmin = isAdminFromToken();
 
   const handleLogout = (e) => {
     e.preventDefault();
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     navigate("/login");
   };
 
@@ -18,11 +30,9 @@ export default function Navbar() {
   useEffect(() => {
     const controlNavbar = () => {
       if (typeof window !== 'undefined') {
-        if (window.scrollY > lastScrollY && window.scrollY > 150) {
-          // if scrolling down and past the top area
+        if (window.scrollY > lastScrollY && window.scrollY > 80) {
           setShow(false);
         } else {
-          // if scrolling up
           setShow(true);
         }
         setLastScrollY(window.scrollY);
@@ -44,21 +54,21 @@ export default function Navbar() {
             <span className="icon">📧</span>
             <div className="contact-text">
               <span className="contact-title">DROP US A EMAIL:.</span>
-              <span className="contact-value">companyname@mail.com</span>
+              <span className="contact-value">hresort.stay@mail.com</span>
             </div>
           </div>
         </div>
 
         <div className="center-logo">
           <h1>H</h1>
-          <span>RESORT HOTEL</span>
+          <span>RESORT</span>
         </div>
 
         <div className="contact-right">
           <div className="contact-item text-right">
             <div className="contact-text">
               <span className="contact-title">ANY QUESTIONS? CALL US:.</span>
-              <span className="contact-value">+91 123-456-780 / +00 987-654-321</span>
+              <span className="contact-value">+91 90909 80808 / +91 02692 255555 </span>
             </div>
             <span className="icon">📞</span>
           </div>
@@ -69,17 +79,46 @@ export default function Navbar() {
       <nav className="dark-navbar">
         <ul className="dark-nav-links">
           <li><Link to="/">HOME</Link></li>
-          <li><Link to="/rooms">RESORTS</Link></li>
-          {token && <li><Link to="/bookings">MY BOOKINGS</Link></li>}
+          <li><Link to="/resorts">RESORTS</Link></li>
+
+          <li className="nav-dropdown">
+            <span className="dropdown-toggle">EXPLORE ▾</span>
+            <div className="dropdown-menu">
+              <Link to="/gallery">Gallery</Link>
+              <Link to="/amenities">Amenities</Link>
+              <Link to="/dining">Dining</Link>
+            </div>
+          </li>
+
           <li><Link to="/about">ABOUT US</Link></li>
           <li><Link to="/contact">CONTACT</Link></li>
+
           {token ? (
-            <li><a href="#" onClick={handleLogout}>LOGOUT</a></li>
+            <li className="nav-dropdown user-dropdown">
+              <span className="dropdown-toggle">
+                <span className="user-icon">👤</span> {isAdmin ? "ADMIN" : "PROFILE"} ▾
+              </span>
+              <div className="dropdown-menu">
+                {isAdmin ? (
+                  <Link to="/admin/dashboard">Admin Dashboard</Link>
+                ) : (
+                  <>
+                    <Link to="/user/dashboard">Dashboard</Link>
+                    <Link to="/bookings">My Bookings</Link>
+                  </>
+                )}
+                <a href="#" onClick={handleLogout}>Logout</a>
+              </div>
+            </li>
           ) : (
             <li><Link to="/login">LOGIN</Link></li>
           )}
         </ul>
-        <button className="nav-search-btn" onClick={() => navigate('/search')}>🔍</button>
+
+        <div className="nav-right-actions">
+          <button className="nav-search-btn" onClick={() => navigate('/search')}>🔍</button>
+          <Link to="/resorts" className="nav-cta-btn">BOOK NOW</Link>
+        </div>
       </nav>
     </header>
   );
