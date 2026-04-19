@@ -93,31 +93,29 @@ export default function Navbar() {
           <li><Link to="/about">ABOUT US</Link></li>
           <li><Link to="/contact">CONTACT</Link></li>
 
-          {token ? (
-            <li className="nav-dropdown user-dropdown">
-              <span className="dropdown-toggle">
-                <span className="user-icon">👤</span> {isAdmin ? "ADMIN" : "PROFILE"} ▾
-              </span>
-              <div className="dropdown-menu">
-                {isAdmin ? (
-                  <Link to="/admin/dashboard">Admin Dashboard</Link>
-                ) : (
-                  <>
-                    <Link to="/user/dashboard">Dashboard</Link>
-                    <Link to="/bookings">My Bookings</Link>
-                  </>
-                )}
-                <a href="#" onClick={handleLogout}>Logout</a>
-              </div>
-            </li>
-          ) : (
-            <li><Link to="/login">LOGIN</Link></li>
-          )}
         </ul>
 
         <div className="nav-right-actions">
-          <button className="nav-search-btn" onClick={() => navigate('/search')}>🔍</button>
-          <Link to="/resorts" className="nav-cta-btn">BOOK NOW</Link>
+          <button className="nav-search-btn" onClick={() => navigate('/search')}>SEARCH</button>
+          {token ? (
+            <div className="nav-dropdown user-dropdown right-side-profile">
+              <span 
+                className="dropdown-toggle profile-icon-only" 
+                onClick={() => navigate(isAdmin ? '/admin/dashboard' : '/user/dashboard')}
+                title="Go to Dashboard"
+              >
+                <span className="user-icon-round">👤</span>
+              </span>
+              <div className="dropdown-menu">
+                {!isAdmin && (
+                  <Link to="/bookings">My Bookings</Link>
+                )}
+                <a href="#" onClick={handleLogout}>Logout</a>
+              </div>
+            </div>
+          ) : (
+            <Link to="/login" className="nav-login-btn">LOGIN</Link>
+          )}
         </div>
       </nav>
     </header>

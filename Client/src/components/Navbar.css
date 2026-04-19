@@ -134,11 +134,14 @@
   background-color: rgba(255, 255, 255, 0.05); /* subtle background instead of orange */
   border: none;
   border-left: 1px solid rgba(255,255,255,0.1);
-  width: 60px;
+  padding: 0 20px;
   height: 100%;
   cursor: pointer;
   color: white;
-  font-size: 18px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
   transition: 0.3s;
   display: flex;
   align-items: center;
@@ -203,10 +206,14 @@
 
 .dropdown-menu a {
   color: #1a1a1a !important;
+  font-family: 'Montserrat', sans-serif;
   font-size: 12px;
+  font-weight: 600;
+  text-decoration: none !important;
   padding: 12px 25px;
   height: auto !important;
   display: block;
+  letter-spacing: 1px;
 }
 
 .dropdown-menu a:hover {
@@ -247,4 +254,57 @@
 .nav-cta-btn:hover {
   background: #df9118 !important;
   color: white !important;
+}
+
+/* User Profile Icon in Right Actions */
+.right-side-profile {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.profile-icon-only {
+  padding: 0 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.user-icon-round {
+  font-size: 18px;
+  background-color: rgba(255, 255, 255, 0.05);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: 0.3s ease;
+}
+
+.nav-dropdown:hover .user-icon-round {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #f9a826;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.nav-login-btn {
+  display: flex;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 0 20px;
+  height: 100%;
+  transition: 0.3s;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-login-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f9a826;
 }

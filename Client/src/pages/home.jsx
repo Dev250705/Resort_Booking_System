@@ -2,6 +2,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./home.css";
 
 function Home() {
@@ -76,6 +77,7 @@ function Home() {
           <div className="theme-hero-content">
             <h1>{heroSlides[currentSlide].title}</h1>
             {/* <button className="theme-book-btn">BOOK NOW</button> */}
+            <Link to="/resorts" className="theme-book-btn">BOOK NOW</Link>
           </div>
 
           <button className="theme-arrow right-arrow" onClick={handleNext}>&rang;</button>

@@ -86,7 +86,9 @@ body {
   cursor: pointer;
   text-transform: uppercase;
   transition: 0.3s;
+  text-decoration: none;
 }
+
 
 .theme-book-btn:hover {
   background-color: #df9118;
