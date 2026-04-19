@@ -12,7 +12,7 @@ export default function AdminBookings() {
   const loadBookings = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/bookings/admin/all", {
+      const res = await fetch(`http://${window.location.hostname}:5000/api/bookings/admin/all`, {
         headers: { Authorization: `Bearer ${getAuthToken()}` },
       });
       const data = await res.json();
@@ -31,7 +31,7 @@ export default function AdminBookings() {
   const updateStatus = async (bookingId, newStatus) => {
     if (!window.confirm(`Mark as ${newStatus}?`)) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/bookings/admin/${bookingId}/status`, {
+      const res = await fetch(`http://${window.location.hostname}:5000/api/bookings/admin/${bookingId}/status`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

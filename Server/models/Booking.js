@@ -30,7 +30,7 @@ const bookingSchema = new mongoose.Schema({
   // Concurrency & Status
   status: {
     type: String,
-    enum: ["Draft", "Pending_Payment", "Confirmed", "Cancelled", "Expired"],
+    enum: ["Draft", "Pending_Payment", "Confirmed", "Cancelled", "Expired", "Completed"],
     default: "Pending_Payment",
   },
   

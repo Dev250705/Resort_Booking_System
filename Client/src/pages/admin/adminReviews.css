@@ -1,46 +1,32 @@
-.admin-reviews-page {
-  min-height: 100vh;
-  background: #f1f5f9;
-}
-
 .admin-reviews-inner {
-  max-width: 900px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 120px 24px 60px;
+  padding: 40px 2px;
 }
 
 .admin-reviews-inner h1 {
   margin: 0 0 12px;
   font-size: 28px;
-  color: #0b1c3d;
+  color: #ffffff;
 }
 
 .admin-reviews-lead {
-  color: #475569;
-  margin: 0 0 8px;
-  line-height: 1.5;
-}
-
-.admin-reviews-hint {
-  font-size: 13px;
-  color: #64748b;
+  color: #cbd5e1;
   margin: 0 0 28px;
-}
-
-.admin-reviews-hint code {
-  background: #e2e8f0;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 12px;
+  line-height: 1.5;
 }
 
 .admin-reviews-status,
 .admin-reviews-empty {
-  color: #64748b;
+  color: #94a3b8;
+  font-size: 16px;
+  margin-top: 20px;
 }
 
 .admin-reviews-error {
-  color: #b91c1c;
+  color: #ef4444;
+  font-weight: 500;
+  margin-top: 20px;
 }
 
 .admin-review-list {
@@ -53,11 +39,11 @@
 }
 
 .admin-review-item {
-  background: #fff;
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 12px;
-  padding: 20px 22px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .admin-review-meta {
@@ -65,29 +51,35 @@
   flex-wrap: wrap;
   gap: 10px 16px;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   font-size: 14px;
 }
 
+.admin-review-meta strong {
+  color: #f8fafc;
+  font-size: 15px;
+}
+
 .admin-review-stars {
-  color: #f7a02d;
+  color: #f9a826;
   letter-spacing: 2px;
 }
 
 .admin-review-user {
-  color: #64748b;
+  color: #94a3b8;
 }
 
 .admin-review-time {
-  color: #94a3b8;
+  color: #64748b;
   font-size: 13px;
 }
 
 .admin-review-comment {
-  margin: 0 0 16px;
-  color: #334155;
-  line-height: 1.55;
+  margin: 0 0 20px;
+  color: #e2e8f0;
+  line-height: 1.6;
   white-space: pre-wrap;
+  font-size: 15px;
 }
 
 .admin-review-actions {
@@ -96,27 +88,39 @@
 }
 
 .admin-btn-approve {
-  padding: 10px 20px;
+  padding: 10px 24px;
   border: none;
   border-radius: 8px;
-  font-weight: 700;
+  font-weight: 600;
+  font-size: 14px;
   cursor: pointer;
-  background: linear-gradient(135deg, #22c55e, #16a34a);
+  background: linear-gradient(135deg, #10b981, #059669);
   color: #fff;
+  transition: opacity 0.2s;
+}
+
+.admin-btn-approve:hover:not(:disabled) {
+  opacity: 0.9;
 }
 
 .admin-btn-reject {
-  padding: 10px 20px;
-  border: 1px solid #fecaca;
+  padding: 10px 24px;
+  border: 1px solid #ef4444;
   border-radius: 8px;
-  font-weight: 700;
+  font-weight: 600;
+  font-size: 14px;
   cursor: pointer;
-  background: #fef2f2;
-  color: #b91c1c;
+  background: transparent;
+  color: #ef4444;
+  transition: all 0.2s;
+}
+
+.admin-btn-reject:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.1);
 }
 
 .admin-btn-approve:disabled,
 .admin-btn-reject:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }

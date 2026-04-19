@@ -203,14 +203,19 @@ exports.adminUpdateBookingStatus = async (req, res) => {
       return res.status(400).json({ message: "Invalid status update" });
     }
 
-    const booking = await Booking.findById(bookingId);
+    const updateQuery = { $set: { status } };
+    
+    if (status === "Confirmed" || status === "Completed" || status === "Cancelled") {
+      updateQuery.$unset = { tempLockExpiresAt: "" };
+    }
+
+    const booking = await Booking.findByIdAndUpdate(bookingId, updateQuery, { new: true });
+    
     if (!booking) {
       return res.status(404).json({ message: "Booking not found" });
     }
 
-    booking.status = status;
-    await booking.save();
-    res.status(200).json({ success: true, message: `Booking marked as ${status}` });
+    res.status(200).json({ success: true, message: `Booking marked as ${status}`, booking });
   } catch (error) {
     console.error("Error updating booking status:", error);
     res.status(500).json({ message: "Server error updating status" });

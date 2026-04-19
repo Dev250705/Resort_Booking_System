@@ -64,7 +64,7 @@ export default function Footer() {
         <p className="copyright">© 2026 H Resort | All Rights Reserved.</p>
         <span className="separator" style={{ color: "#4f5b73" }}>•</span>
         <div className="footer-bottom-links">
-          <Link to="/policy">Privacy Policy</Link>
+          <Link to="/policy">Policies</Link>
         </div>
       </div>
     </footer>

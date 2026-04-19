@@ -9,7 +9,7 @@ import VerifyOtp from "./pages/user/verifyotp";
 import About from "./pages/about";
 import Contact from "./pages/contact";
 import Policy from "./pages/policy";
-import Rooms from "./pages/rooms";
+import Resort from "./pages/resort";
 import ResortDetails from "./pages/resortDetails";
 import Search from "./pages/search";
 import Payment from "./pages/payment";
@@ -43,7 +43,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/policy" element={<Policy />} />
-        <Route path="/resorts" element={<Rooms />} />
+        <Route path="/resorts" element={<Resort />} />
         <Route path="/search" element={<Search />} />
         <Route path="/resort/:id" element={<ResortDetails />} />
         <Route path="/payment" element={<Payment />} />

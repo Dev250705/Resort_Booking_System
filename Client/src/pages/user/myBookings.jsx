@@ -23,7 +23,7 @@ export default function MyBookings() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/bookings/my-bookings', {
+      const response = await fetch(`http://${window.location.hostname}:5000/api/bookings/my-bookings`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
@@ -43,7 +43,7 @@ export default function MyBookings() {
     setCancellingId(bookingId);
     const token = sessionStorage.getItem('token');
     try {
-      const response = await fetch(`http://localhost:5000/api/bookings/cancel/${bookingId}`, {
+      const response = await fetch(`http://${window.location.hostname}:5000/api/bookings/cancel/${bookingId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -272,8 +272,18 @@ export default function MyBookings() {
   };
 
   const now = new Date();
-  const upcomingBookings = bookings.filter(b => b.status === "Confirmed" || b.status === "Pending_Payment");
-  const pastBookings = bookings.filter(b => b.status === "Cancelled" || b.status === "Expired" || new Date(b.checkOutDate) < now && b.status !== "Confirmed"); // simplified logic for demo
+  
+  const upcomingBookings = bookings.filter(b => 
+    (b.status === "Confirmed" || b.status === "Pending_Payment") && 
+    new Date(b.checkOutDate) >= now
+  );
+
+  const pastBookings = bookings.filter(b => 
+    b.status === "Cancelled" || 
+    b.status === "Expired" || 
+    b.status === "Completed" || 
+    new Date(b.checkOutDate) < now
+  );
 
   const displayedBookings = activeTab === 'upcoming' ? upcomingBookings : pastBookings;
 

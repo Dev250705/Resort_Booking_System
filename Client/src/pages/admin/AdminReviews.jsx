@@ -80,12 +80,9 @@ export default function AdminReviews() {
   return (
     <div className="admin-page-content">
       <div className="admin-reviews-inner">
-        <h1>Review moderation</h1>
+        <h1>Review Moderation</h1>
         <p className="admin-reviews-lead">
-          Approve reviews to show them on resort pages. Reject removes them so the guest can try again.
-        </p>
-        <p className="admin-reviews-hint">
-          Set a user&apos;s <code>role</code> to <code>admin</code> in MongoDB to access this page.
+          Manage guest feedback. Approve reviews to display them publicly on resort pages, or reject inappropriate ones to clear them from pending.
         </p>
 
         {loading && <p className="admin-reviews-status">Loading…</p>}

@@ -89,7 +89,7 @@ export default function Navbar() {
               <Link to="/dining">Dining</Link>
             </div>
           </li>
-
+          <li><Link to="/policy">Privacy Policy</Link></li>
           <li><Link to="/about">ABOUT US</Link></li>
           <li><Link to="/contact">CONTACT</Link></li>
 
