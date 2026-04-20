@@ -20,7 +20,7 @@ export default function Resort() {
   const navigate = useNavigate();
   const location = useLocation();
   const searchState = location.state || {};
-  const { checkIn: roomsCheckIn, checkOut: roomsCheckOut, guests: roomsGuests, locationQuery } = searchState;
+  const { checkIn: roomsCheckIn, checkOut: roomsCheckOut, guests: roomsGuests, rooms: searchRoomsCount, locationQuery } = searchState;
 
   const filters = ["All", "Luxury", "Deluxe", "Standard", "Economy", "Suite"];
 
@@ -35,7 +35,7 @@ export default function Resort() {
            qs.append('checkOut', roomsCheckOut);
            if (roomsGuests) {
                qs.append('guests', roomsGuests);
-               qs.append('rooms', '1');
+               qs.append('rooms', searchRoomsCount || '1');
            }
         }
         const url = qs.toString() 
@@ -49,7 +49,7 @@ export default function Resort() {
         const data = await response.json();
 
         const getImageUrl = (url) => url?.startsWith('/uploads') ? `http://${window.location.hostname}:5000${url}` : url;
-        const mappedData = Array.isArray(data) ? data.map(resort => {
+        let mappedData = Array.isArray(data) ? data.map(resort => {
           if (resort.images) resort.images = resort.images.map(getImageUrl);
           if (resort.roomTypes) {
             resort.roomTypes = resort.roomTypes.map(rt => {

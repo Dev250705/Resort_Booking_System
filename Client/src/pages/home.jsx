@@ -12,6 +12,7 @@ function Home() {
 
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
+  const [roomsCount, setRoomsCount] = useState(1);
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [locationQuery, setLocationQuery] = useState("");
@@ -87,7 +88,7 @@ function Home() {
         <div className="home-search-wrapper">
           <form className="home-search-form" onSubmit={(e) => {
             e.preventDefault();
-            navigate('/resorts', { state: { checkIn, checkOut, guests: adults + children, locationQuery } });
+            navigate('/resorts', { state: { checkIn, checkOut, guests: adults + children, rooms: roomsCount, locationQuery } });
           }}>
             <div className="search-field">
               <label>Location</label>
@@ -108,11 +109,22 @@ function Home() {
                 className="guest-selector-display"
                 onClick={() => setShowGuests(!showGuests)}
               >
-                {adults} Adult{adults !== 1 ? 's' : ''}, {children} Child{children !== 1 ? 'ren' : ''}
+                {roomsCount} Room{roomsCount !== 1 ? 's' : ''}, {adults} Adult{adults !== 1 ? 's' : ''}, {children} Child{children !== 1 ? 'ren' : ''}
               </div>
 
               {showGuests && (
                 <div className="guest-dropdown">
+                  <div className="guest-row">
+                    <div className="guest-info">
+                      <strong>Rooms</strong>
+                      <span></span>
+                    </div>
+                    <div className="guest-controls">
+                      <button type="button" onClick={() => roomsCount > 1 && setRoomsCount(roomsCount - 1)}>-</button>
+                      <span>{roomsCount}</span>
+                      <button type="button" onClick={() => setRoomsCount(roomsCount + 1)}>+</button>
+                    </div>
+                  </div>
                   <div className="guest-row">
                     <div className="guest-info">
                       <strong>Adults</strong>
@@ -159,7 +171,7 @@ function Home() {
                 <div className="popular-card" key={resort._id || index}>
                   <div 
                     className="popular-card-img" 
-                    onClick={() => navigate(`/resort/${resort._id}`, { state: { checkIn, checkOut, guests: adults + children } })}
+                    onClick={() => navigate(`/resort/${resort._id}`, { state: { checkIn, checkOut, guests: adults + children, rooms: roomsCount } })}
                     style={{ cursor: 'pointer' }}
                   >
                     <img src={imageUrl} alt={resort.name} />
@@ -178,7 +190,7 @@ function Home() {
                       <button
                         type="button"
                         className="learn-more-btn"
-                        onClick={() => navigate(`/resort/${resort._id}`, { state: { checkIn, checkOut, guests: adults + children } })}
+                        onClick={() => navigate(`/resort/${resort._id}`, { state: { checkIn, checkOut, guests: adults + children, rooms: roomsCount } })}
                       >
                         VIEW RESORT
                       </button>

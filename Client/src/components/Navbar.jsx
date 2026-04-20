@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./Navbar.css";
 
@@ -15,6 +15,8 @@ function isAdminFromToken() {
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = location.pathname;
   const token = sessionStorage.getItem("token");
   const isAdmin = isAdminFromToken();
 
@@ -54,7 +56,7 @@ export default function Navbar() {
             <span className="icon">📧</span>
             <div className="contact-text">
               <span className="contact-title">DROP US A EMAIL:.</span>
-              <span className="contact-value">hresort.stay@mail.com</span>
+              <span className="contact-value">hresort.stay@gmail.com</span>
             </div>
           </div>
         </div>
@@ -78,20 +80,20 @@ export default function Navbar() {
       {/* Main Dark Navbar */}
       <nav className="dark-navbar">
         <ul className="dark-nav-links">
-          <li><Link to="/">HOME</Link></li>
-          <li><Link to="/resorts">RESORTS</Link></li>
+          <li><Link to="/" className={currentPath === '/' || currentPath === '/home' ? 'active' : ''}>HOME</Link></li>
+          <li><Link to="/resorts" className={currentPath.startsWith('/resort') ? 'active' : ''}>RESORTS</Link></li>
 
           <li className="nav-dropdown">
-            <span className="dropdown-toggle">EXPLORE ▾</span>
+            <span className={`dropdown-toggle ${['/gallery', '/amenities', '/dining'].includes(currentPath) ? 'active' : ''}`}>EXPLORE ▾</span>
             <div className="dropdown-menu">
-              <Link to="/gallery">Gallery</Link>
-              <Link to="/amenities">Amenities</Link>
-              <Link to="/dining">Dining</Link>
+              <Link to="/gallery" className={currentPath === '/gallery' ? 'active' : ''}>Gallery</Link>
+              <Link to="/amenities" className={currentPath === '/amenities' ? 'active' : ''}>Amenities</Link>
+              <Link to="/dining" className={currentPath === '/dining' ? 'active' : ''}>Dining</Link>
             </div>
           </li>
-          <li><Link to="/policy">Privacy Policy</Link></li>
-          <li><Link to="/about">ABOUT US</Link></li>
-          <li><Link to="/contact">CONTACT</Link></li>
+          <li><Link to="/policy" className={currentPath === '/policy' ? 'active' : ''}>Privacy Policy</Link></li>
+          <li><Link to="/about" className={currentPath === '/about' ? 'active' : ''}>ABOUT US</Link></li>
+          <li><Link to="/contact" className={currentPath === '/contact' ? 'active' : ''}>CONTACT</Link></li>
 
         </ul>
 
@@ -99,8 +101,8 @@ export default function Navbar() {
           <button className="nav-search-btn" onClick={() => navigate('/search')}>SEARCH</button>
           {token ? (
             <div className="nav-dropdown user-dropdown right-side-profile">
-              <span 
-                className="dropdown-toggle profile-icon-only" 
+              <span
+                className="dropdown-toggle profile-icon-only"
                 onClick={() => navigate(isAdmin ? '/admin/dashboard' : '/user/dashboard')}
                 title="Go to Dashboard"
               >

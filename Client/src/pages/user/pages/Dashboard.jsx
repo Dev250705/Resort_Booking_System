@@ -9,7 +9,7 @@ import Wishlist from './Wishlist';
 import Payments from './Payments';
 import MyBookings from './Bookings';
 import { isStayCompleted } from '../../../utils/stayPolicy';
-import { Plus, Search, Bell } from 'lucide-react';
+import { Plus, Search, Bell, Home } from 'lucide-react';
 import './Dashboard.css';
 
 export default function Dashboard() {
@@ -174,6 +174,10 @@ export default function Dashboard() {
               <Bell size={20} />
               <span className="notification-dot"></span>
             </button> */}
+            <button className="btn-secondary" onClick={() => navigate('/')}>
+              <Home size={20} />
+              Back to Home
+            </button>
             <button className="btn-primary" onClick={() => navigate('/search')}>
               <Plus size={20} />
               Book New Stay
