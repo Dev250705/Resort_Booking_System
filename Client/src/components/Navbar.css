@@ -65,6 +65,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  color: white;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.center-logo:active {
+  color: red;
 }
 
 .center-logo h1 {

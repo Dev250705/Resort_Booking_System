@@ -13,7 +13,7 @@ export default function AdminLayout() {
     <div className="admin-layout-root">
       <aside className="admin-sidebar">
         <div className="admin-sidebar-header">
-          <h2>Admin<span>Dashboard</span></h2>
+          <h2>H<span>Resort</span></h2>
         </div>
 
         <nav className="admin-sidebar-nav">

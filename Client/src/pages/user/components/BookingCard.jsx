@@ -14,9 +14,10 @@ const BookingCard = ({ booking, isFeatured = false }) => {
   const checkIn = new Date(booking.checkInDate || booking.dates?.split(' - ')[0]).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
   const checkOut = new Date(booking.checkOutDate || booking.dates?.split(' - ')[1]).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 
-  const imageUrl = booking.resort?.images?.[0]
-    ? (booking.resort.images[0].startsWith('http') ? booking.resort.images[0] : `http://localhost:5000${booking.resort.images[0]}`)
-    : (booking.image || "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=600");
+  const rawImageUrl = booking.resort?.images?.[0] || booking.image;
+  const imageUrl = rawImageUrl
+    ? (rawImageUrl.startsWith('/uploads') ? `http://${window.location.hostname}:5000${rawImageUrl}` : rawImageUrl)
+    : "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=600";
 
   const handleDownloadInvoice = () => {
     let customerName = 'Valued Guest';
@@ -223,7 +224,14 @@ const BookingCard = ({ booking, isFeatured = false }) => {
   return (
     <div className="booking-card">
       <div className="booking-image">
-        <img src={imageUrl} alt={resortName} />
+        <img 
+          src={imageUrl} 
+          alt={resortName} 
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=600";
+          }}
+        />
         <div className={`booking-status status-${booking.status?.toLowerCase()}`}>
           {booking.status}
         </div>

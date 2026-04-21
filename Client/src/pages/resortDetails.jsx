@@ -256,6 +256,17 @@ export default function ResortDetails() {
           data.images = mockImages;
         }
 
+        const getImageUrl = (url) => url?.startsWith('/uploads') ? `http://${window.location.hostname}:5000${url}` : url;
+        if (data.images) {
+          data.images = data.images.map(getImageUrl);
+        }
+        if (data.roomTypes) {
+          data.roomTypes = data.roomTypes.map(rt => {
+            if (rt.images) rt.images = rt.images.map(getImageUrl);
+            return rt;
+          });
+        }
+
         setResort(data);
         setError(null);
       } catch (err) {
@@ -805,7 +816,7 @@ export default function ResortDetails() {
                 <button className="go-m-slider-btn right" onClick={nextImg}>&#10095;</button>
               </div>
 
-              <h3>Room Features</h3><br></br>
+              <h3>Room Features & Amenities</h3><br></br>
               <div className="go-modal-specs">
                 {selectedRoom.amenities && selectedRoom.amenities.length > 0 ? (
                   selectedRoom.amenities.map((feat, idx) => {

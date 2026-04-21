@@ -10,6 +10,8 @@ function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const navigate = useNavigate();
 
+  const getImageUrl = (url) => url?.startsWith('/uploads') ? `http://${window.location.hostname}:5000${url}` : url;
+
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [roomsCount, setRoomsCount] = useState(1);
@@ -34,7 +36,12 @@ function Home() {
       .then((res) => res.json())
       .then((data) => {
         // Backend already sorts by newest first (_id: -1), just limit to top 9
-        const recentNine = data.slice(0, 6);
+        const recentNine = data.slice(0, 6).map(resort => {
+          if (resort.images) {
+            resort.images = resort.images.map(getImageUrl);
+          }
+          return resort;
+        });
         setResorts(recentNine);
       })
       .catch((err) => console.log(err));
@@ -104,12 +111,12 @@ function Home() {
             </div>
 
             <div className="search-field guest-field" style={{ position: 'relative' }}>
-              <label>Guests</label>
+              <label>Rooms & Guests</label>
               <div
                 className="guest-selector-display"
                 onClick={() => setShowGuests(!showGuests)}
               >
-                {roomsCount} Room{roomsCount !== 1 ? 's' : ''}, {adults} Adult{adults !== 1 ? 's' : ''}, {children} Child{children !== 1 ? 'ren' : ''}
+                {roomsCount} Room{roomsCount !== 1 ? 's' : ''}, {adults + children} Guest{adults + children !== 1 ? 's' : ''}
               </div>
 
               {showGuests && (
@@ -174,7 +181,14 @@ function Home() {
                     onClick={() => navigate(`/resort/${resort._id}`, { state: { checkIn, checkOut, guests: adults + children, rooms: roomsCount } })}
                     style={{ cursor: 'pointer' }}
                   >
-                    <img src={imageUrl} alt={resort.name} />
+                    <img 
+                      src={imageUrl} 
+                      alt={resort.name} 
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80";
+                      }}
+                    />
                     {startingPrice && <div className="price-tag">From ₹{startingPrice}</div>}
                   </div>
                   <div className="popular-card-content">

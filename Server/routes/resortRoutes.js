@@ -18,5 +18,10 @@ router.delete("/admin/:id", authMiddleware, adminMiddleware, resortController.de
 router.post("/admin/:id/rooms", authMiddleware, adminMiddleware, upload.array('roomImages', 5), resortController.addRoomType);
 router.put("/admin/:id/rooms/:roomId", authMiddleware, adminMiddleware, resortController.updateRoomType);
 router.delete("/admin/:id/rooms/:roomId", authMiddleware, adminMiddleware, resortController.removeRoomType);
+router.post("/admin/:id/images", authMiddleware, adminMiddleware, upload.array('newImages', 10), resortController.addResortImages);
+router.delete("/admin/:id/images", authMiddleware, adminMiddleware, resortController.removeResortImage);
+
+router.post("/admin/:id/rooms/:roomId/images", authMiddleware, adminMiddleware, upload.array('newImages', 10), resortController.addRoomImages);
+router.delete("/admin/:id/rooms/:roomId/images", authMiddleware, adminMiddleware, resortController.removeRoomImage);
 
 module.exports = router;

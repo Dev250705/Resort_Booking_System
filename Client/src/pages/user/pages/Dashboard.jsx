@@ -73,26 +73,37 @@ export default function Dashboard() {
 
           setStats({ total, upcoming, completed, reviewsPending });
 
+          const getImageUrl = (url) => typeof url === 'string' && url.startsWith('/uploads') ? `http://${window.location.hostname}:5000${url}` : url;
+
           // Map the backend data to the UI structure for cards
-          const mappedBookings = bookings.map(b => ({
-            id: b._id,
-            resortName: b.resort?.name || 'Resort Stay',
-            location: b.resort?.address || 'Unknown Location',
-            dates: `${new Date(b.checkInDate).toLocaleDateString()} - ${new Date(b.checkOutDate).toLocaleDateString()}`,
-            status: b.status,
-            image: b.resort?.images?.[0]?.url || "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&q=80&w=800"
-          }));
+          const mappedBookings = bookings.map(b => {
+            const rawImage = b.resort?.images?.[0];
+            // Handle both object with url property (if changed) or direct string (current backend implementation)
+            const imageUrlStr = typeof rawImage === 'object' && rawImage !== null ? rawImage.url : rawImage;
+            
+            return {
+              id: b._id,
+              resortName: b.resort?.name || 'Resort Stay',
+              location: b.resort?.address || 'Unknown Location',
+              dates: `${new Date(b.checkInDate).toLocaleDateString()} - ${new Date(b.checkOutDate).toLocaleDateString()}`,
+              status: b.status,
+              image: getImageUrl(imageUrlStr) || "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&q=80&w=800"
+            };
+          });
 
           setRecentBookings(mappedBookings.slice(0, 3));
           if (upcomingBookings.length > 0) {
             const nextBooking = upcomingBookings[0];
+            const rawImageNext = nextBooking.resort?.images?.[0];
+            const imageUrlStrNext = typeof rawImageNext === 'object' && rawImageNext !== null ? rawImageNext.url : rawImageNext;
+            
             setUpcomingBooking({
               id: nextBooking._id,
               resortName: nextBooking.resort?.name || 'Resort Stay',
               location: nextBooking.resort?.address || 'Unknown Location',
               dates: `${new Date(nextBooking.checkInDate).toLocaleDateString()} - ${new Date(nextBooking.checkOutDate).toLocaleDateString()}`,
               status: nextBooking.status,
-              image: nextBooking.resort?.images?.[0]?.url || "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=800"
+              image: getImageUrl(imageUrlStrNext) || "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=800"
             });
           }
         }

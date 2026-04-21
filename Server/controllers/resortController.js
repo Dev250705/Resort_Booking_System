@@ -290,3 +290,95 @@ exports.updateRoomType = async (req, res) => {
     res.status(500).json({ message: "Error updating room" });
   }
 };
+
+exports.addResortImages = async (req, res) => {
+  try {
+    const resortId = req.params.id;
+    const resort = await Resort.findById(resortId);
+    if (!resort) return res.status(404).json({ message: "Resort not found" });
+
+    if (req.files && req.files.length > 0) {
+      const newImages = req.files.map(file => `/uploads/${file.filename}`);
+      resort.images = [...(resort.images || []), ...newImages];
+      await resort.save();
+    }
+    
+    res.status(200).json({ success: true, message: "Images added", resort });
+  } catch (err) {
+    console.error("Error adding resort images:", err);
+    res.status(500).json({ message: "Error adding resort images" });
+  }
+};
+
+exports.removeResortImage = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { imageUrl } = req.query;
+
+    const resort = await Resort.findById(id);
+    if (!resort) return res.status(404).json({ message: "Resort not found" });
+
+    if (imageUrl) {
+      const updatedResort = await Resort.findByIdAndUpdate(
+        id,
+        { $pull: { images: imageUrl } },
+        { new: true }
+      );
+      return res.status(200).json({ success: true, message: "Image removed", resort: updatedResort });
+    }
+
+    res.status(200).json({ success: true, message: "No image removed", resort });
+  } catch (err) {
+    console.error("Error removing resort image:", err);
+    res.status(500).json({ message: "Error removing resort image" });
+  }
+};
+
+exports.addRoomImages = async (req, res) => {
+  try {
+    const { id: resortId, roomId } = req.params;
+    const resort = await Resort.findById(resortId);
+    if (!resort) return res.status(404).json({ message: "Resort not found" });
+
+    const room = resort.roomTypes.id(roomId);
+    if (!room) return res.status(404).json({ message: "Room not found" });
+
+    if (req.files && req.files.length > 0) {
+      const newImages = req.files.map(file => `/uploads/${file.filename}`);
+      newImages.forEach(img => {
+        room.images.push(img);
+      });
+      await resort.save();
+    }
+    
+    res.status(200).json({ success: true, message: "Room images added", resort });
+  } catch (err) {
+    console.error("Error adding room images:", err);
+    res.status(500).json({ message: "Error adding room images" });
+  }
+};
+
+exports.removeRoomImage = async (req, res) => {
+  try {
+    const { id: resortId, roomId } = req.params;
+    const { imageUrl } = req.query;
+
+    const resort = await Resort.findById(resortId);
+    if (!resort) return res.status(404).json({ message: "Resort not found" });
+
+    const room = resort.roomTypes.id(roomId);
+    if (!room) return res.status(404).json({ message: "Room not found" });
+
+    if (imageUrl && room.images) {
+      room.images.pull(imageUrl);
+      await resort.save();
+      return res.status(200).json({ success: true, message: "Room image removed", resort });
+    }
+
+    res.status(200).json({ success: true, message: "No image removed", resort });
+  } catch (err) {
+    console.error("Error removing room image:", err);
+    res.status(500).json({ message: "Error removing room image" });
+  }
+};
+

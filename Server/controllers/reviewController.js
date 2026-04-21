@@ -51,13 +51,13 @@ exports.createReview = async (req, res) => {
       return res.status(404).json({ message: "Booking not found" });
     }
 
-    if (booking.status !== "Confirmed") {
+    if (booking.status !== "Confirmed" && booking.status !== "Completed") {
       return res.status(400).json({
-        message: "Only confirmed stays can be reviewed after check-out",
+        message: "Only confirmed or completed stays can be reviewed",
       });
     }
 
-    if (!stayPolicy.isStayCompletedByCheckoutDate(booking.checkOutDate)) {
+    if (booking.status !== "Completed" && !stayPolicy.isStayCompletedByCheckoutDate(booking.checkOutDate)) {
       return res.status(400).json({
         message:
           "You can leave a review after check-out (11:00 AM on your check-out day), per property policy",
@@ -103,14 +103,14 @@ exports.getReviewEligibility = async (req, res) => {
     const bookings = await Booking.find({
       user: userId,
       resort: resortId,
-      status: "Confirmed",
+      status: { $in: ["Confirmed", "Completed"] },
     })
       .sort({ checkOutDate: -1 })
       .lean();
 
     let anyPending = false;
     for (const b of bookings) {
-      if (!stayPolicy.isStayCompletedByCheckoutDate(b.checkOutDate)) continue;
+      if (b.status !== "Completed" && !stayPolicy.isStayCompletedByCheckoutDate(b.checkOutDate)) continue;
       const rev = await Review.findOne({ booking: b._id }).select("isApproved").lean();
       if (!rev) {
         return res.json({

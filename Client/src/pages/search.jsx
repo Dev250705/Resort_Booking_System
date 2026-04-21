@@ -104,7 +104,10 @@ export default function Search() {
               {filteredResorts.map((resort) => {
                 const prices = resort.roomTypes?.map(r => r.basePrice) || [];
                 const startingPrice = prices.length > 0 ? Math.min(...prices) : null;
-                const imageUrl = resort.images?.[0] || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80";
+                const rawImageUrl = resort.images?.[0];
+                const imageUrl = rawImageUrl 
+                  ? (rawImageUrl.startsWith('/uploads') ? `http://${window.location.hostname}:5000${rawImageUrl}` : rawImageUrl)
+                  : "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80";
 
                 return (
                   <div className="search-card" key={resort._id}>
@@ -113,7 +116,14 @@ export default function Search() {
                       onClick={() => navigate(`/resort/${resort._id}`)}
                       style={{ cursor: 'pointer' }}
                     >
-                      <img src={imageUrl} alt={resort.name} />
+                      <img 
+                        src={imageUrl} 
+                        alt={resort.name} 
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80";
+                        }}
+                      />
                       {startingPrice && <div className="search-card-price">From ₹{startingPrice}</div>}
                     </div>
                     <div className="search-card-content">

@@ -61,10 +61,10 @@ export default function Navbar() {
           </div>
         </div>
 
-        <div className="center-logo">
+        <Link to="/" className="center-logo">
           <h1>H</h1>
           <span>RESORT</span>
-        </div>
+        </Link>
 
         <div className="contact-right">
           <div className="contact-item text-right">
