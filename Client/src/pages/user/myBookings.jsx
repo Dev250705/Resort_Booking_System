@@ -4,6 +4,8 @@ import Navbar from '../../components/Navbar';
 import './myBookings.css';
 
 export default function MyBookings() {
+  const FALLBACK_RESORT_IMAGE = 'https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=600';
+
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -271,6 +273,23 @@ export default function MyBookings() {
     return new Date(dateString).toLocaleDateString('en-US', options);
   };
 
+  const getBookingImageUrl = (booking) => {
+    const rawImage =
+      booking?.resort?.images?.[0]?.url ||
+      booking?.resort?.images?.[0] ||
+      booking?.image;
+
+    if (!rawImage || typeof rawImage !== 'string') {
+      return FALLBACK_RESORT_IMAGE;
+    }
+
+    if (rawImage.startsWith('/uploads')) {
+      return `http://${window.location.hostname}:5000${rawImage}`;
+    }
+
+    return rawImage;
+  };
+
   const now = new Date();
   
   const upcomingBookings = bookings.filter(b => 
@@ -286,6 +305,15 @@ export default function MyBookings() {
   );
 
   const displayedBookings = activeTab === 'upcoming' ? upcomingBookings : pastBookings;
+
+  const canCancelBooking = (booking) => {
+    if (!(booking.status === "Confirmed" || booking.status === "Pending_Payment")) {
+      return false;
+    }
+
+    // Past stays should never show cancel action even if status stayed "Confirmed".
+    return new Date(booking.checkOutDate) >= new Date();
+  };
 
   return (
     <div className="bookings-page-wrapper">
@@ -339,8 +367,12 @@ export default function MyBookings() {
               <div key={booking._id} className="lux-booking-card">
                 <div className="lux-booking-image">
                   <img 
-                    src={booking.resort?.images?.[0] || 'https://via.placeholder.com/600x400?text=Resort'} 
+                    src={getBookingImageUrl(booking)} 
                     alt={booking.resort?.name || 'Resort'} 
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = FALLBACK_RESORT_IMAGE;
+                    }}
                   />
                   <div className={`lux-status-badge status-${booking.status}`}>
                     {booking.status.replace('_', ' ')}
@@ -376,7 +408,7 @@ export default function MyBookings() {
                     </div>
 
                     <div className="lux-actions">
-                      {(booking.status === "Confirmed" || booking.status === "Pending_Payment") && (
+                      {canCancelBooking(booking) && (
                         <button 
                           className="lux-btn-cancel"
                           onClick={() => handleCancelBooking(booking._id)}

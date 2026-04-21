@@ -96,7 +96,7 @@ export default function AdminBookings() {
                   <td>
                     <select
                       value=""
-                      style={{ padding: "0.25rem", borderRadius: "4px", background: "rgba(255,255,255,0.1)", color: "#fff", border: "none" }}
+                      className="admin-status-select"
                       onChange={(e) => updateStatus(b._id, e.target.value)}
                     >
                       <option value="" disabled>Change Status...</option>
