@@ -22,6 +22,9 @@ export default function Payment() {
   const checkOutState = location.state?.checkOut || '';
   const guestsState = location.state?.guests || 2;
 
+  // Timezone-safe local date string format: YYYY-MM-DD
+  const todayLocalDateString = new Date().toLocaleDateString('en-CA');
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -161,8 +164,6 @@ export default function Payment() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-
-
   const calculateNights = () => {
     if (!formData.checkIn || !formData.checkOut) return 0;
     const cin = new Date(formData.checkIn);
@@ -181,7 +182,6 @@ export default function Payment() {
   const calculateExtrasTotal = () => {
     let total = 0;
     const stayNights = nights || 1;
-    const guestCount = parseInt(formData.guests) || 1;
 
     // Quantity based
     if (extras.breakfast > 0) total += extraPrices.breakfast * stayNights * extras.breakfast;
@@ -196,7 +196,6 @@ export default function Payment() {
     if (extras.cabana) total += extraPrices.cabana;
     if (extras.earlyCheckIn) total += extraPrices.earlyCheckIn;
     if (extras.lateCheckOut) total += extraPrices.lateCheckOut;
-
 
     return total;
   };
@@ -389,14 +388,16 @@ export default function Payment() {
     }
   };
 
-
   if (!resort || !room) return null;
 
   return (
     <div className="payment-page">
       <div className="payment-minimal-header">
         <Link to={`/resort/${resort._id}`} className="payment-back-btn">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
           Back to Resort
         </Link>
         <div className="payment-logo-min">H<span>RESORT</span></div>
@@ -405,7 +406,7 @@ export default function Payment() {
       <form id="checkout-form" onSubmit={handleSubmit}>
         <div className="payment-layout">
 
-          {/* Main Content */}
+          {/* Main Content (Guest Info, Dates, Addons & Policies) */}
           <div className="payment-main">
 
             <div className="payment-header">
@@ -413,10 +414,13 @@ export default function Payment() {
               <p>You're almost there! Fill in your details to secure your stay at {resort.name}.</p>
             </div>
 
-
+            {/* Step 1: Guest Information */}
             <div className="payment-form-section">
               <h2>
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
                 Guest Information
               </h2>
               <div className="form-grid">
@@ -439,19 +443,25 @@ export default function Payment() {
               </div>
             </div>
 
+            {/* Step 2: Stay Details */}
             <div className="payment-form-section">
               <h2>
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
                 Stay Details
               </h2>
               <div className="form-grid">
                 <div className="input-group">
                   <label>Check-in Date</label>
-                  <input type="date" name="checkIn" value={formData.checkIn} onChange={handleInputChange} min={new Date().toISOString().split("T")[0]} required />
+                  <input type="date" name="checkIn" value={formData.checkIn} onChange={handleInputChange} min={todayLocalDateString} required />
                 </div>
                 <div className="input-group">
                   <label>Check-out Date</label>
-                  <input type="date" name="checkOut" value={formData.checkOut} onChange={handleInputChange} min={formData.checkIn || new Date().toISOString().split("T")[0]} required />
+                  <input type="date" name="checkOut" value={formData.checkOut} onChange={handleInputChange} min={formData.checkIn || todayLocalDateString} required />
                 </div>
                 <div className="input-group">
                   <label>Number of Guests</label>
@@ -461,42 +471,118 @@ export default function Payment() {
                     <button type="button" onClick={(e) => handleGuestsChange(1, e)} disabled={currentGuests >= maxAllowedGuests}>+</button>
                   </div>
                   <div className="room-requirement-note">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="16" x2="12" y2="12"></line>
+                      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
                     Requires {requiredRooms} room{requiredRooms > 1 ? 's' : ''} out of {availableRoomsCount} available.
                   </div>
                 </div>
               </div>
             </div>
 
+            {/* Step 3: Enhance Your Stay (Add-on Services) */}
+            <div className="payment-form-section">
+              <h2>
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="14" width="7" height="7"></rect>
+                  <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                Enhance Your Stay (Add-on Services)
+              </h2>
+              <div className="extras-grid">
+                {serviceConfig.map(svc => (
+                  <div key={svc.id} className={`extra-card ${extras[svc.id] ? 'selected' : ''}`}>
+                    <div className="extra-card-header">
+                      <div>
+                        <h3 className="extra-card-title">{svc.title}</h3>
+                        <p className="extra-card-desc">{svc.desc}</p>
+                      </div>
+                    </div>
+                    <div className="extra-card-footer">
+                      <div className="extra-price-tag">{svc.priceLabel}</div>
+                      <div style={{ width: svc.type === 'qty' ? '110px' : '90px' }}>
+                        {svc.type === 'qty' ? (
+                          extras[svc.id] === 0 ? (
+                            <button type="button" className="add-service-btn" onClick={(e) => updateExtraQuantity(svc.id, 1, e)}>Add</button>
+                          ) : (
+                            <div className="extra-qty-controls">
+                              <button type="button" onClick={(e) => updateExtraQuantity(svc.id, -1, e)}>-</button>
+                              <span>{extras[svc.id]}</span>
+                              <button type="button" onClick={(e) => updateExtraQuantity(svc.id, 1, e)}>+</button>
+                            </div>
+                          )
+                        ) : (
+                          !extras[svc.id] ? (
+                            <button type="button" className="add-service-btn" onClick={(e) => toggleExtra(svc.id, e)}>Add</button>
+                          ) : (
+                            <button type="button" className="add-service-btn added" onClick={(e) => toggleExtra(svc.id, e)}>Added ✓</button>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Step 4: Important Policies */}
             <div className="payment-policies">
               <h2>
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
                 Important Policies
               </h2>
               <ul className="policy-list">
                 <li className="policy-item">
-                  <div className="policy-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></div>
+                  <div className="policy-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="8" x2="12" y2="12"></line>
+                      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                  </div>
                   <div className="policy-text">
                     <h4>Cancellation Policy</h4>
                     <p>Free cancellation up to 48 hours before check-in. Cancellations made within 48 hours will incur a 1-night penalty.</p>
                   </div>
                 </li>
                 <li className="policy-item">
-                  <div className="policy-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+                  <div className="policy-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                  </div>
                   <div className="policy-text">
                     <h4>Check-in / Check-out</h4>
                     <p>Standard check-in is at 2:00 PM and check-out is at 11:00 AM local time.</p>
                   </div>
                 </li>
                 <li className="policy-item">
-                  <div className="policy-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
+                  <div className="policy-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                  </div>
                   <div className="policy-text">
                     <h4>Identification Required</h4>
                     <p>A valid government-issued photo ID is required for all guests upon formal check-in.</p>
                   </div>
                 </li>
                 <li className="policy-item">
-                  <div className="policy-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div>
+                  <div className="policy-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                      <line x1="12" y1="9" x2="12" y2="13"></line>
+                      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                  </div>
                   <div className="policy-text">
                     <h4>House Rules</h4>
                     <p>Smoking is strictly prohibited inside the rooms. Damage to property will be billed to your registered payment method.</p>
@@ -507,8 +593,8 @@ export default function Payment() {
 
           </div>
 
-          {/* Sidebar Summary */}
-          <div className="payment-sidebar" style={{ position: 'sticky', top: '40px', height: 'max-content' }}>
+          {/* Sidebar Summary (Price details & Proceed to payment button) */}
+          <div className="payment-sidebar">
             <div className="invoice-sidebar">
               <div className="invoice-resort-info">
                 <img src={room.images?.[0] || resort.images?.[0]} alt="Room Preview" />
@@ -519,7 +605,7 @@ export default function Payment() {
                 </div>
               </div>
 
-              <h3 style={{ fontSize: '16px', marginBottom: '16px', color: '#111' }}>Price Details</h3>
+              <h3 className="invoice-section-title">Price Details</h3>
 
               <div className="invoice-summary-row">
                 <span>₹{room.basePrice.toLocaleString()} x {requiredRooms} room{requiredRooms > 1 && 's'} x {nights > 0 ? nights : 1} night{nights > 1 && 's'}</span>
@@ -607,26 +693,34 @@ export default function Payment() {
 
               <button type="submit" className="checkout-btn" disabled={subtotal === 0 || isProcessing}>
                 Proceed to Payment
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
               </button>
+
               {isProcessing && (
-                <p style={{ color: "#92400e", fontSize: "13px", marginTop: "10px", textAlign: "center" }}>
+                <p className="payment-status-processing">
                   Initializing secure payment...
                 </p>
               )}
               {paymentError && (
-                <p style={{ color: "#ef4444", fontSize: "13px", marginTop: "10px", textAlign: "center" }}>
+                <p className="payment-status-error">
                   {paymentError}
                 </p>
               )}
               {(nights <= 0 || !formData.checkIn || !formData.checkOut) && (
-                <p style={{ color: '#ef4444', fontSize: '13px', marginTop: '15px', textAlign: 'center' }}>Please select valid dates to continue</p>
+                <p className="payment-status-warning">
+                  Please select valid dates to continue
+                </p>
               )}
 
               <div className="trust-badges">
                 <div className="trust-badge">
                   <div className="trust-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
                   </div>
                   <div className="trust-content">
                     <h4>Secure Booking</h4>
@@ -635,80 +729,41 @@ export default function Payment() {
                 </div>
                 <div className="trust-badge">
                   <div className="trust-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
                   </div>
                   <div className="trust-content">
                     <h4>Instant Confirmation</h4>
-                    <p>Your booking is instantly confirmed directly with the property.</p>
+                    <p>Your booking is confirmed instantly with the property.</p>
                   </div>
                 </div>
-              </div></div>
-          </div>
-
-        </div>
-
-        {/* Full Width Add-ons Section Below */}
-        <div className="payment-addons-container" style={{ maxWidth: '1400px', margin: '40px auto', padding: '0 5%' }}>
-          <div className="payment-form-section" style={{ marginBottom: '0' }}>
-            <h2>
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-              Enhance Your Stay (Add-on Services)
-            </h2>
-            <div className="extras-grid full-width">
-              {serviceConfig.map(svc => (
-                <div key={svc.id} className={`extra-card ${extras[svc.id] ? 'selected' : ''}`}>
-                  <div className="extra-card-header">
-                    <div>
-                      <h3 className="extra-card-title">{svc.title}</h3>
-                      <p className="extra-card-desc">{svc.desc}</p>
-                    </div>
-                  </div>
-                  <div className="extra-card-footer">
-                    <div className="extra-price-tag">{svc.priceLabel}</div>
-                    <div style={{ width: svc.type === 'qty' ? '110px' : '90px' }}>
-                      {svc.type === 'qty' ? (
-                        extras[svc.id] === 0 ? (
-                          <button type="button" className="add-service-btn" onClick={(e) => updateExtraQuantity(svc.id, 1, e)}>Add</button>
-                        ) : (
-                          <div className="extra-qty-controls">
-                            <button type="button" onClick={(e) => updateExtraQuantity(svc.id, -1, e)}>-</button>
-                            <span>{extras[svc.id]}</span>
-                            <button type="button" onClick={(e) => updateExtraQuantity(svc.id, 1, e)}>+</button>
-                          </div>
-                        )
-                      ) : (
-                        !extras[svc.id] ? (
-                          <button type="button" className="add-service-btn" onClick={(e) => toggleExtra(svc.id, e)}>Add</button>
-                        ) : (
-                          <button type="button" className="add-service-btn added" onClick={(e) => toggleExtra(svc.id, e)}>Added ✓</button>
-                        )
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
+              </div>
             </div>
           </div>
+
         </div>
       </form>
 
+      {/* Styled Mock UPI Overlay */}
       {showMockUpi && (
-        <div className="upi-mock-overlay" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.7)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="upi-mock-modal" style={{ background: '#fff', padding: '30px', borderRadius: '12px', width: '380px', textAlign: 'center', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
-            <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <span style={{ fontFamily: '"Times New Roman", Times, serif', fontSize: '46px', color: '#0f172a', lineHeight: '1' }}>H</span>
-              <span style={{ fontSize: '11px', fontWeight: 'bold', letterSpacing: '3px', color: '#0f172a', marginTop: '6px' }}>RESORT</span>
+        <div className="upi-mock-overlay">
+          <div className="upi-mock-modal">
+            <div className="upi-mock-logo-container">
+              <span className="upi-mock-logo-char">H</span>
+              <span className="upi-mock-logo-text">RESORT</span>
             </div>
-            <h2 style={{ marginBottom: '10px', color: '#111' }}>Pay via UPI</h2>
-            <p style={{ color: '#666', marginBottom: '20px' }}>Secure Fast Checkout</p>
+            <h2>Pay via UPI</h2>
+            <p className="upi-mock-subtitle">Secure Fast Checkout</p>
 
-            <div style={{ background: '#f5f5f5', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
-              <p style={{ margin: 0, fontSize: '14px', color: '#555' }}>Amount to Pay</p>
-              <h3 style={{ margin: '5px 0 0', fontSize: '24px', color: '#111' }}>₹{(currentMockOrder?.amount / 100)?.toLocaleString()}</h3>
+            <div className="upi-mock-amount-box">
+              <p>Amount to Pay</p>
+              <h3>₹{(currentMockOrder?.amount / 100)?.toLocaleString()}</h3>
             </div>
 
-            <div style={{ marginBottom: '12px', display: 'flex', flexDirection: 'column', gap: '8px', textAlign: 'left' }}>
-              <label htmlFor="mock-upi-input" style={{ fontSize: '13px', fontWeight: 600, color: '#333' }}>UPI ID</label>
+            <div className="upi-mock-input-group">
+              <label htmlFor="mock-upi-input">UPI ID</label>
               <input
                 id="mock-upi-input"
                 type="text"
@@ -719,30 +774,29 @@ export default function Payment() {
                 }}
                 placeholder="Enter your UPI ID"
                 autoComplete="off"
-                style={{ width: '100%', padding: '12px', border: '1px solid #ddd', borderRadius: '6px', color: '#111', backgroundColor: '#fff', outline: 'none', boxSizing: 'border-box' }}
               />
             </div>
             {mockModalError && (
-              <p style={{ color: '#ef4444', fontSize: '13px', marginBottom: '14px', textAlign: 'center' }}>{mockModalError}</p>
+              <p className="upi-mock-error">{mockModalError}</p>
             )}
 
             <button
               type="button"
+              className="upi-mock-btn-confirm"
               onClick={handleMockConfirm}
               disabled={isProcessing}
-              style={{ width: '100%', padding: '14px', background: '#f7a02d', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 'bold', fontSize: '16px', cursor: isProcessing ? 'not-allowed' : 'pointer', marginBottom: '10px', opacity: isProcessing ? 0.85 : 1 }}
             >
-              {isProcessing ? 'Confirming…' : 'Confirm payment'}
+              {isProcessing ? 'Confirming…' : 'Confirm Payment'}
             </button>
             <button
               type="button"
+              className="upi-mock-btn-cancel"
               onClick={() => {
                 setShowMockUpi(false);
                 setMockUpiInput('');
                 setMockModalError('');
                 setPaymentError('Payment cancelled.');
               }}
-              style={{ width: '100%', padding: '14px', background: 'transparent', color: '#666', border: 'none', fontSize: '14px', cursor: 'pointer', textDecoration: 'underline' }}
             >
               Cancel Payment
             </button>

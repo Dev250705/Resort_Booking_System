@@ -14,6 +14,7 @@ import './Dashboard.css';
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('Overview');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
   const [stats, setStats] = useState({ total: 0, upcoming: 0, completed: 0, reviewsPending: 0 });
@@ -22,6 +23,10 @@ export default function Dashboard() {
   const [upcomingBooking, setUpcomingBooking] = useState(null);
 
   const [userProfile, setUserProfile] = useState({ name: 'User' });
+
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [activeTab]);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -75,10 +80,8 @@ export default function Dashboard() {
 
           const getImageUrl = (url) => typeof url === 'string' && url.startsWith('/uploads') ? `http://${window.location.hostname}:5000${url}` : url;
 
-          // Map the backend data to the UI structure for cards
           const mappedBookings = bookings.map(b => {
             const rawImage = b.resort?.images?.[0];
-            // Handle both object with url property (if changed) or direct string (current backend implementation)
             const imageUrlStr = typeof rawImage === 'object' && rawImage !== null ? rawImage.url : rawImage;
             
             return {
@@ -126,7 +129,6 @@ export default function Dashboard() {
       case 'Security':
         return <Security />;
       case 'My Bookings':
-        // Use the existing fully working MyBookings component and hide its navbar if possible
         return <div style={{ background: '#fff', borderRadius: '20px', padding: '20px', overflow: 'hidden' }}><MyBookings hideNavbar={true} /></div>;
       case 'Wishlist':
         return <Wishlist />;
@@ -167,24 +169,32 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="dashboard-layout">
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+    <div className="dashboard-layout user-dashboard-container">
+      <div className={`sidebar-wrapper ${isSidebarOpen ? 'open' : ''}`}>
+        <button className="sidebar-close-btn" onClick={() => setIsSidebarOpen(false)} aria-label="Close Menu">
+          ✕
+        </button>
+        <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+        {isSidebarOpen && (
+          <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)}></div>
+        )}
+      </div>
 
-      <main className="dashboard-main">
+      <main className="dashboard-main user-dashboard-main">
         <header className="dashboard-header">
-          <div className="header-greeting">
-            <h1>Welcome {userProfile.name},  </h1>
-            <p>Manage your luxurious stays and explore new destinations.</p>
+          <div className="dashboard-header-left">
+            <button className="dashboard-menu-toggle" onClick={() => setIsSidebarOpen(true)} aria-label="Open Menu">
+              <span className="bar"></span>
+              <span className="bar"></span>
+              <span className="bar"></span>
+            </button>
+            <div className="header-greeting">
+              <h1>Welcome {userProfile.name},  </h1>
+              <p>Manage your luxurious stays and explore new destinations.</p>
+            </div>
           </div>
 
           <div className="header-actions">
-            {/* <button className="btn-icon">
-              <Search size={20} />
-            </button>
-            <button className="btn-icon">
-              <Bell size={20} />
-              <span className="notification-dot"></span>
-            </button> */}
             <button className="btn-secondary" onClick={() => navigate('/')}>
               <Home size={20} />
               Back to Home
@@ -193,9 +203,6 @@ export default function Dashboard() {
               <Plus size={20} />
               Book New Stay
             </button>
-            {/* <div className="user-avatar" style={{ background: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#475569' }}>
-              {userProfile.name.charAt(0)}
-            </div> */}
           </div>
         </header>
 

@@ -1,9 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap');
 
+html, body {
+  overflow-x: hidden !important;
+  width: 100%;
+}
+
 .login-root {
   position: relative;
   width: 100%;
-  height: 100%;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -14,22 +19,60 @@
   background-position: center;
   background-repeat: no-repeat;
   overflow: hidden;
+  box-sizing: border-box;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: 1;
+  opacity: 0.12;
+}
+
+.orb-1 {
+  width: 300px;
+  height: 300px;
+  background: #d4af7f;
+  top: -100px;
+  left: -100px;
+}
+
+.orb-2 {
+  width: 400px;
+  height: 400px;
+  background: #a67c52;
+  bottom: -150px;
+  right: -100px;
+}
+
+.orb-3 {
+  width: 250px;
+  height: 250px;
+  background: #d4af7f;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.06;
 }
 
 .login-card {
   position: relative;
+  z-index: 2;
   width: 100%;
   max-width: 400px;
   padding: 20px 24px;
   border-radius: 18px;
-  background: rgba(10, 6, 2, 0.52);
+  background: rgba(10, 6, 2, 0.65);
   border: 1px solid rgba(212, 175, 127, 0.25);
   box-shadow:
     0 0 0 1px rgba(0, 0, 0, 0.3),
     0 20px 60px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 rgba(212, 175, 127, 0.1);
   backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   animation: cardReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  box-sizing: border-box;
 }
 
 @keyframes cardReveal {
@@ -37,7 +80,6 @@
     opacity: 0;
     transform: translateY(24px) scale(0.97);
   }
-
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -70,11 +112,12 @@
   position: relative;
   margin-bottom: 15px;
   animation: fadeSlide 0.5s ease both;
+  box-sizing: border-box;
 }
 
 .login-field-wrap input {
   width: 100%;
-  padding: 10px 38px;
+  padding: 12px 38px;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -83,6 +126,7 @@
   font-size: 13px;
   outline: none;
   transition: all 0.25s ease;
+  box-sizing: border-box;
 }
 
 .login-field-wrap input::placeholder {
@@ -108,13 +152,17 @@
 
 .login-field-icon {
   position: absolute;
-  left: 11px;
-  top: 11px;
-  width: 15px;
-  height: 15px;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
   color: rgba(245, 236, 224, 0.5);
   pointer-events: none;
   transition: color 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .login-field-icon svg {
@@ -132,15 +180,17 @@
 
 .login-eye-btn {
   position: absolute;
-  right: 10px;
-  top: 9px;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
   color: rgba(245, 236, 224, 0.5);
-  padding: 2px;
+  padding: 0;
   display: flex;
   align-items: center;
+  justify-content: center;
   transition: color 0.2s;
 }
 
@@ -152,14 +202,14 @@
   display: block;
   font-size: 11px;
   color: #ff9a9a;
-  margin-top: 3px;
+  margin-top: 5px;
   padding-left: 3px;
   animation: fadeSlide 0.2s ease both;
 }
 
 .login-submit-btn {
   width: 100%;
-  padding: 11px;
+  padding: 12px;
   margin-top: 4px;
   border-radius: 10px;
   border: none;
@@ -167,7 +217,7 @@
   color: #0a0602;
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.5px;
   cursor: pointer;
   display: flex;
@@ -175,6 +225,7 @@
   justify-content: center;
   gap: 8px;
   transition: all 0.25s ease;
+  box-sizing: border-box;
 }
 
 .login-submit-btn:hover {
@@ -256,22 +307,25 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.75);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 999;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .login-modal-box {
-  background: rgba(10, 6, 2, 0.92);
+  background: rgba(10, 6, 2, 0.94);
   border: 1px solid rgba(212, 175, 127, 0.25);
   border-radius: 18px;
   padding: 32px 28px;
-  width: 360px;
+  width: 90%;
+  max-width: 360px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
   animation: cardReveal 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  box-sizing: border-box;
 }
 
 .login-modal-box h2 {
@@ -285,6 +339,7 @@
   color: rgba(245, 236, 224, 0.5);
   font-size: 12px;
   margin-bottom: 20px;
+  line-height: 1.4;
 }
 
 .login-modal-cancel {
@@ -326,7 +381,6 @@
     opacity: 0;
     transform: translateY(10px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -336,7 +390,7 @@
 @media (max-width: 480px) {
   .login-card {
     padding: 22px 18px;
-    margin: 0 1rem;
+    margin: 0 16px;
   }
 
   .login-header h1 {

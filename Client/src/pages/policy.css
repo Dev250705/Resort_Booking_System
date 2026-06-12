@@ -6,7 +6,6 @@
   font-family: 'Montserrat', sans-serif;
   color: #2a3a5b;
   min-height: 100vh;
-
 }
 
 /* Hero Section */
@@ -17,7 +16,6 @@
   max-height: 420px;
   overflow: hidden;
   margin-top: 120px;
-  /* Offset for fixed navbar */
   background: #0a1428;
 }
 
@@ -80,7 +78,7 @@
 /* Main Container */
 .policy-container {
   max-width: 1140px;
-  margin: 50px auto 50px;
+  margin: 50px auto;
   display: flex;
   background: #ffffff;
   border-radius: 22px;
@@ -161,7 +159,6 @@
     opacity: 0;
     transform: translateY(15px);
   }
-
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -241,6 +238,7 @@
   }
 }
 
+/* MOBILE VIEW - Vertical list menu (No horizontal scroll) */
 @media (max-width: 860px) {
   .policy-container {
     flex-direction: column;
@@ -248,31 +246,28 @@
 
   .policy-sidebar {
     width: 100%;
-    padding: 10px;
+    padding: 20px;
     border-right: none;
     border-bottom: 1px solid #e3e6ed;
     display: flex;
-    overflow-x: auto;
-    white-space: nowrap;
-    scrollbar-width: none;
-  }
-
-  .policy-sidebar::-webkit-scrollbar {
-    display: none;
+    flex-direction: column; /* Stacks all menu buttons vertically */
+    gap: 10px;
   }
 
   .policy-tab {
-    width: auto;
+    width: 100%;
     padding: 14px 20px;
-    border-left: none;
-    border-bottom: 3px solid transparent;
-    justify-content: center;
+    border-left: 4px solid transparent;
+    border-bottom: none;
+    border-radius: 8px;
+    background: #f7f7f9;
+    justify-content: flex-start;
   }
 
   .policy-tab.active {
-    border-left-color: transparent;
-    border-bottom-color: #f9a826;
-    background: transparent;
+    border-left-color: #f9a826;
+    background: #fafafc;
+    color: #d18737;
   }
 
   .policy-content-wrapper {

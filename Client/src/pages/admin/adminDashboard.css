@@ -113,7 +113,7 @@
 
 @media (max-width: 768px) {
   .admin-dashboard-inner {
-    padding: 100px 1.5rem 3rem;
+    padding: 0 1.5rem 3rem;
   }
 
   .admin-header h1 {

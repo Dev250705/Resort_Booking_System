@@ -6,10 +6,10 @@ import "./resort.css";
 import heroBg from "../assets/hero_bg.png";
 
 export default function Resort() {
-
   const [resorts, setResorts] = useState([]);
   const [filteredResorts, setFilteredResorts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [detailLoading, setDetailLoading] = useState(false); // FIXED: Added missing state declaration
   const [error, setError] = useState(null);
   const [activeFilter, setActiveFilter] = useState("all");
   const [displayCount, setDisplayCount] = useState(6);
@@ -198,7 +198,7 @@ export default function Resort() {
               <button
                 type="button"
                 className="detail-back-btn"
-                onClick={() => navigate("/rooms")}
+                onClick={() => navigate("/resorts")}
               >
                 Back to Gallery
               </button>
@@ -258,17 +258,37 @@ export default function Resort() {
             {selectedResort.roomTypes?.length > 0 ? (
               selectedResort.roomTypes.map((room) => (
                 <div className="room-card" key={room._id || room.title}>
-                  <h4>{room.title}</h4>
-                  <p>{room.description || "Comfortable stay with included amenities."}</p>
-                  <div className="room-stats">
-                    <span>Guests: {room.maxGuests || "-"}</span>
-                    <span>
-                      Available:{" "}
-                      {room.availableInventory ?? room.inventoryCount ?? "-"}
-                      {roomsCheckIn && roomsCheckOut ? " (your dates)" : ""}
-                    </span>
+                  <div>
+                    <h4>{room.title}</h4>
+                    <p>{room.description || "Comfortable stay with included amenities."}</p>
+                    <div className="room-stats">
+                      <span>Guests: {room.maxGuests || "-"}</span>
+                      <span>
+                        Available:{" "}
+                        {room.availableInventory ?? room.inventoryCount ?? "-"}
+                        {roomsCheckIn && roomsCheckOut ? " (your dates)" : ""}
+                      </span>
+                    </div>
                   </div>
-                  <div className="room-price">₹{room.basePrice || "-"} / night</div>
+                  {/* FIXED: Added Book Room button in footer connected to payment page */}
+                  <div className="room-card-footer">
+                    <div className="room-price">₹{room.basePrice || "-"} / night</div>
+                    <button
+                      type="button"
+                      className="book-room-btn"
+                      onClick={() => navigate('/payment', {
+                        state: {
+                          resort: selectedResort,
+                          room: room,
+                          checkIn: roomsCheckIn,
+                          checkOut: roomsCheckOut,
+                          guests: roomsGuests
+                        }
+                      })}
+                    >
+                      Book Room
+                    </button>
+                  </div>
                 </div>
               ))
             ) : (
@@ -313,8 +333,6 @@ export default function Resort() {
           <h1 className="gallery-title">OUR RESORTS</h1>
         </div>
       </div>
-
-
 
       {/* Gallery Section */}
       <section className="gallery-section">
@@ -368,7 +386,7 @@ export default function Resort() {
                       paddingBottom: '2px',
                       transition: 'all 0.3s ease'
                     }}
-                    onMouseOver={(e) => e.target.style.opacity = '0.7'}
+                    onMouseOver={(e) => e.style.opacity = '0.7'}
                     onMouseOut={(e) => e.target.style.opacity = '1'}
                   >
                     Show All &darr;
@@ -380,9 +398,7 @@ export default function Resort() {
         </div>
       </section>
 
-
       <Footer />
     </div>
   );
 }
-

@@ -4,6 +4,7 @@ body {
   margin: 0;
   font-family: 'Montserrat', sans-serif;
   background: white;
+  overflow-x: hidden; /* Prevent horizontal scrollbars */
 }
 
 /* Theme Orange Home */
@@ -15,13 +16,12 @@ body {
 .theme-hero {
   position: relative;
   height: 100vh;
-  min-height: 700px;
+  min-height: 600px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   overflow: hidden;
-  /* prevent scale overflow */
 }
 
 @keyframes smoothFadeInOut {
@@ -29,7 +29,6 @@ body {
     opacity: 0.6;
     transform: scale(1.05);
   }
-
   100% {
     opacity: 1;
     transform: scale(1);
@@ -54,8 +53,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.3);
-  /* Slight darkening for text */
+  background: rgba(0, 0, 0, 0.35); /* Slightly darker for better readability */
   z-index: -1;
 }
 
@@ -63,15 +61,17 @@ body {
   z-index: 10;
   color: white;
   margin-top: 50px;
+  padding: 0 20px;
 }
 
 .theme-hero-content h1 {
   font-family: 'Playfair Display', serif;
-  font-size: 72px;
+  font-size: clamp(38px, 6vw, 72px); /* Responsive scaling */
   font-weight: 400;
   white-space: pre-line;
   margin-bottom: 40px;
   letter-spacing: 1px;
+  line-height: 1.2;
 }
 
 .theme-book-btn {
@@ -80,18 +80,21 @@ body {
   border: none;
   padding: 18px 45px;
   font-family: 'Montserrat', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 2px;
   cursor: pointer;
   text-transform: uppercase;
-  transition: 0.3s;
+  transition: all 0.3s ease;
   text-decoration: none;
+  display: inline-block;
+  border-radius: 4px;
 }
-
 
 .theme-book-btn:hover {
   background-color: #df9118;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(249, 168, 38, 0.4);
 }
 
 /* Arrows */
@@ -99,52 +102,59 @@ body {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background-color: #f9a826;
+  background-color: rgba(249, 168, 38, 0.85);
   color: white;
   border: none;
   width: 50px;
   height: 50px;
-  font-size: 24px;
+  border-radius: 50%;
+  font-size: 20px;
   cursor: pointer;
   z-index: 10;
-  transition: 0.3s;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .theme-arrow:hover {
   background-color: #df9118;
+  transform: translateY(-50%) scale(1.05);
 }
 
 .left-arrow {
-  left: 5%;
+  left: 3%;
 }
 
 .right-arrow {
-  right: 5%;
+  right: 3%;
 }
 
 /* Booking Search Bar */
 .home-search-wrapper {
   position: relative;
-  max-width: 1000px;
-  margin: -130px auto 40px;
+  max-width: 1100px;
+  margin: -100px auto 40px;
   background: white;
-  padding: 20px 30px;
+  padding: 30px 40px;
   border-radius: 8px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.12);
   z-index: 20;
 }
 
 .home-search-form {
   display: flex;
-  align-items: center;
+  align-items: flex-end; /* Align inputs and button vertically at baseline */
   justify-content: space-between;
-  gap: 15px;
+  gap: 20px 15px;
+  flex-wrap: wrap;
 }
 
 .search-field {
   display: flex;
   flex-direction: column;
   flex: 1;
+  min-width: 180px;
 }
 
 .search-field label {
@@ -152,8 +162,8 @@ body {
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  color: #666;
-  margin-bottom: 6px;
+  color: #888;
+  margin-bottom: 8px;
   letter-spacing: 1px;
 }
 
@@ -167,7 +177,7 @@ body {
   outline: none;
   background: transparent;
   color: #333;
-  transition: 0.3s;
+  transition: all 0.3s ease;
 }
 
 .search-field input:focus,
@@ -183,12 +193,12 @@ body {
   border-bottom: 2px solid #eee;
   cursor: pointer;
   color: #333;
-  transition: 0.3s;
-  min-width: 180px;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   min-height: 40px;
+  box-sizing: border-box;
 }
 
 .guest-selector-display:hover {
@@ -231,14 +241,14 @@ body {
 
 .guest-info strong {
   font-family: 'Montserrat', sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   color: #222;
   font-weight: 700;
 }
 
 .guest-info span {
-  font-size: 13px;
-  color: #888;
+  font-size: 11px;
+  color: #999;
   margin-top: 4px;
 }
 
@@ -249,12 +259,12 @@ body {
 }
 
 .guest-controls button {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border: 1px solid #ddd;
   background: white;
   border-radius: 50%;
-  font-size: 20px;
+  font-size: 18px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -271,7 +281,7 @@ body {
 
 .guest-controls span {
   font-family: 'Montserrat', sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   width: 16px;
   text-align: center;
@@ -283,53 +293,34 @@ body {
   color: white;
   border: none;
   border-radius: 4px;
-  padding: 15px 30px;
+  padding: 0 30px;
   font-family: 'Montserrat', sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 1px;
   cursor: pointer;
-  height: 50px;
-  margin-top: 15px;
-  transition: 0.3s;
+  height: 44px;
+  transition: all 0.3s ease;
+  min-width: 180px;
+  margin-bottom: 2px;
 }
 
 .search-submit-btn:hover {
   background-color: #df9118;
-}
-
-@media (max-width: 900px) {
-  .home-search-form {
-    flex-wrap: wrap;
-  }
-
-  .search-field {
-    flex: 1 1 40%;
-  }
-
-  .search-submit-btn {
-    flex: 1 1 100%;
-    margin-top: 20px;
-  }
-}
-
-@media (max-width: 600px) {
-  .search-field {
-    flex: 1 1 100%;
-  }
+  box-shadow: 0 5px 15px rgba(249, 168, 38, 0.3);
 }
 
 /* Popular Rooms Section */
 .popular-rooms-section {
-  padding: 30px 5%;
+  padding: 60px 5%;
   text-align: center;
 }
 
 .popular-rooms-section h2 {
   font-family: 'Playfair Display', serif;
-  font-size: 42px;
+  font-size: clamp(32px, 4vw, 42px);
   color: #222;
-  margin-bottom: 60px;
+  margin-bottom: 50px;
 }
 
 .popular-grid {
@@ -340,21 +331,39 @@ body {
   margin: 0 auto;
 }
 
+/* Premium Card Design */
 .popular-card {
-  border: 1px solid #e0e0e0;
+  border: 1px solid #f0f0f0;
   background: white;
   text-align: left;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.02);
+}
+
+.popular-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  border-color: #e2e2e2;
 }
 
 .popular-card-img {
   position: relative;
-  height: 280px;
+  height: 260px;
+  overflow: hidden;
+  cursor: pointer;
 }
 
 .popular-card-img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.popular-card:hover .popular-card-img img {
+  transform: scale(1.06);
 }
 
 .price-tag {
@@ -362,11 +371,12 @@ body {
   top: 0;
   right: 0;
   background-color: #f9a826;
-  color: #222;
+  color: white;
   font-weight: 700;
-  font-size: 18px;
-  padding: 10px 20px;
+  font-size: 15px;
+  padding: 8px 18px;
   font-family: 'Montserrat', sans-serif;
+  border-bottom-left-radius: 6px;
 }
 
 .popular-card-content {
@@ -375,44 +385,54 @@ body {
 
 .popular-card-content h3 {
   font-family: 'Playfair Display', serif;
-  font-size: 24px;
+  font-size: 22px;
   color: #222;
   margin: 0 0 10px;
+  line-height: 1.3;
 }
 
 .stars {
   color: #f9a826;
-  font-size: 16px;
-  margin-bottom: 25px;
-  letter-spacing: 2px;
+  font-size: 14px;
+  margin-bottom: 12px;
+  letter-spacing: 1.5px;
+}
+
+.location-info {
+  color: #666; 
+  font-size: 13px; 
+  margin-bottom: 20px;
 }
 
 .card-footer-flex {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px solid #eee;
+  border-top: 1px solid #f0f0f0;
   padding-top: 20px;
 }
 
 .duration {
   color: #777;
-  font-size: 13px;
+  font-size: 12px;
   display: flex;
   align-items: center;
   gap: 5px;
+  font-weight: 500;
 }
 
 .learn-more-btn {
   background-color: #f9a826;
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 10px 18px;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
   cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 4px;
 }
 
 .learn-more-btn:hover {
@@ -422,20 +442,20 @@ body {
 /* EXPERIENCES SECTION */
 .experiences-section {
   background-color: #faf9f7;
-  padding: 30px 5%;
+  padding: 70px 5%;
   text-align: center;
 }
 
 .experiences-header h2 {
   font-family: 'Playfair Display', serif;
-  font-size: 38px;
+  font-size: clamp(30px, 4vw, 38px);
   color: #222;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .experiences-header p {
-  color: #666;
-  font-size: 16px;
+  color: #777;
+  font-size: 15px;
   margin-bottom: 50px;
 }
 
@@ -449,56 +469,131 @@ body {
 
 .experience-card {
   background: white;
-  padding: 40px 20px;
-  border: 1px solid #eee;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 40px 24px;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
 .experience-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+  border-color: #eaeaea;
 }
 
 .exp-icon {
-  font-size: 48px;
+  font-size: 44px;
   margin-bottom: 20px;
   display: inline-block;
 }
 
 .experience-card h4 {
   font-family: 'Playfair Display', serif;
-  font-size: 20px;
+  font-size: 19px;
   color: #333;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
+  font-weight: 600;
 }
 
 .experience-card p {
   color: #777;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.6;
+  margin: 0;
 }
 
-/* RESPONSIVE DESIGN FOR NEW SECTIONS */
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .home-search-wrapper {
+    margin: -80px 25px 40px;
+    padding: 25px;
+  }
+}
+
 @media (max-width: 900px) {
+  .theme-arrow {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+  
+  .left-arrow { left: 2%; }
+  .right-arrow { right: 2%; }
+
   .popular-grid {
     grid-template-columns: repeat(2, 1fr) !important;
+    gap: 25px;
   }
 
   .experiences-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-search-wrapper {
+    margin: 20px 20px 40px; /* Shift search bar below hero in flow for mobile */
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.06);
+  }
+
+  .home-search-form {
+    align-items: stretch; /* Stretch fields on mobile layout */
+  }
+
+  .search-field {
+    flex: 1 1 calc(50% - 10px);
+  }
+
+  .search-submit-btn {
+    flex: 1 1 100%;
+    margin-top: 10px;
   }
 }
 
 @media (max-width: 600px) {
+  .theme-hero {
+    min-height: 500px;
+    height: 85vh; /* slightly shorter hero on small devices */
+  }
+
+  .theme-hero-content h1 {
+    font-size: 38px;
+    margin-bottom: 30px;
+  }
+
+  .theme-book-btn {
+    padding: 15px 35px;
+    font-size: 12px;
+  }
+
+  .search-field {
+    flex: 1 1 100%;
+  }
+
+  .guest-dropdown {
+    width: calc(100vw - 80px); /* Fit to screen boundaries */
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
   .popular-grid {
     grid-template-columns: 1fr !important;
   }
 
-  .experiences-grid {
-    grid-template-columns: 1fr;
+  .popular-card-img {
+    height: 220px;
   }
 
-  .theme-hero-content h1 {
-    font-size: 48px;
+  .experiences-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .experiences-section {
+    padding: 50px 5%;
   }
 }

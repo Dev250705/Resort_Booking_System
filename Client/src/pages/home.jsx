@@ -35,7 +35,6 @@ function Home() {
     fetch(`http://${window.location.hostname}:5000/api/resorts`)
       .then((res) => res.json())
       .then((data) => {
-        // Backend already sorts by newest first (_id: -1), just limit to top 9
         const recentNine = data.slice(0, 6).map(resort => {
           if (resort.images) {
             resort.images = resort.images.map(getImageUrl);
@@ -51,7 +50,7 @@ function Home() {
   useEffect(() => {
     const slideInterval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 4500); // changes every 4.5 seconds
+    }, 4500);
     return () => clearInterval(slideInterval);
   }, [heroSlides.length]);
 
@@ -70,7 +69,7 @@ function Home() {
       <Navbar />
       <main className="theme-orange-home">
 
-        {/* HERO SECTION MATCHING MOCKUP */}
+        {/* HERO SECTION */}
         <section className="theme-hero">
           <div
             key={currentSlide}
@@ -80,15 +79,14 @@ function Home() {
             <div className="theme-overlay"></div>
           </div>
 
-          <button className="theme-arrow left-arrow" onClick={handlePrev}>&lang;</button>
+          <button className="theme-arrow left-arrow" onClick={handlePrev} aria-label="Previous Slide">&lang;</button>
 
           <div className="theme-hero-content">
             <h1>{heroSlides[currentSlide].title}</h1>
-            {/* <button className="theme-book-btn">BOOK NOW</button> */}
             <Link to="/resorts" className="theme-book-btn">BOOK NOW</Link>
           </div>
 
-          <button className="theme-arrow right-arrow" onClick={handleNext}>&rang;</button>
+          <button className="theme-arrow right-arrow" onClick={handleNext} aria-label="Next Slide">&rang;</button>
         </section>
 
         {/* BOOKING SEARCH BAR */}
@@ -124,7 +122,6 @@ function Home() {
                   <div className="guest-row">
                     <div className="guest-info">
                       <strong>Rooms</strong>
-                      <span></span>
                     </div>
                     <div className="guest-controls">
                       <button type="button" onClick={() => roomsCount > 1 && setRoomsCount(roomsCount - 1)}>-</button>
@@ -168,10 +165,8 @@ function Home() {
 
           <div className="popular-grid">
             {resorts.map((resort, index) => {
-              // Calculate starting price if rooms exist
               const prices = resort.roomTypes?.map(r => r.basePrice) || [];
               const startingPrice = prices.length > 0 ? Math.min(...prices) : null;
-
               const imageUrl = resort.images?.[0] || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80";
 
               return (
@@ -179,7 +174,6 @@ function Home() {
                   <div 
                     className="popular-card-img" 
                     onClick={() => navigate(`/resort/${resort._id}`, { state: { checkIn, checkOut, guests: adults + children, rooms: roomsCount } })}
-                    style={{ cursor: 'pointer' }}
                   >
                     <img 
                       src={imageUrl} 
@@ -196,7 +190,7 @@ function Home() {
                     <div className="stars">
                       {'★'.repeat(Math.max(1, Math.round(resort.rating || 5)))}{'☆'.repeat(5 - Math.max(1, Math.round(resort.rating || 5)))}
                     </div>
-                    <div style={{ color: '#666', fontSize: '14px', marginBottom: '15px' }}>
+                    <div className="location-info">
                       📍 {resort.location?.city || "Unknown Location"}
                     </div>
                     <div className="card-footer-flex">
@@ -229,12 +223,12 @@ function Home() {
               <p>Savor culinary masterpieces crafted by top chefs.</p>
             </div>
             <div className="experience-card">
-              <span className="exp-icon">🧘‍♀️</span>
+              <span className="exp-icon">🧘</span>
               <h4>Spa & Wellness</h4>
               <p>Rejuvenate your mind and body in our luxury spas.</p>
             </div>
             <div className="experience-card">
-              <span className="exp-icon">🏊‍♂️</span>
+              <span className="exp-icon">🏊</span>
               <h4>Private Pools</h4>
               <p>Infinity pools with breathtaking scenic views.</p>
             </div>
