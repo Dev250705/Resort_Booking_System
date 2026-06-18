@@ -122,7 +122,7 @@ export default function Dashboard() {
     }
   }, [activeTab, navigate]);
 
-  const resort-booking-system-cizy.vercel.appContent = () => {
+  const ResortContent = () => {
     switch (activeTab) {
       case 'My Profile':
         return <Profile />;

@@ -143,7 +143,7 @@ export default function Resort() {
       .join(", ");
   };
 
-  const resort-booking-system-cizy.vercel.appDetailView = () => {
+  const ResortDetailView = () => {
     if (detailLoading) {
       return (
         <div className="gallery-container">
