@@ -207,7 +207,7 @@ export default function Dashboard() {
         </header>
 
         <div className="dashboard-content">
-          {resort-booking-system-cizy.vercel.appContent()}
+          {ResortContent()}
         </div>
       </main>
     </div>
