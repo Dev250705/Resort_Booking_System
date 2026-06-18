@@ -81,7 +81,7 @@ export default function ResortDetails() {
     setIsWishlistLoading(true);
     try {
       const res = await fetch(
-        `${API_URL}/api/users/wishlist/toggle`,
+        `https://resort-booking-system-cizy.vercel.app/api/users/wishlist/toggle`,
         {
           method: "POST",
           headers: {
