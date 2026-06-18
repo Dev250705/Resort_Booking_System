@@ -57,20 +57,6 @@ function Contact() {
             Palaces. Our team is ready to assist with booking, group stays and
             bespoke travel experiences.
           </p>
-          <div className="contact-locations">
-            <article>
-              <h3>BHAVIN HALPATI</h3>
-              <p>+91 6356 438 525</p>
-            </article>
-            <article>
-              <h3>DEV DALWADI</h3>
-              <p>+91 7874 811 012</p>
-            </article>
-            <article>
-              <h3>PRINCE AKBARI</h3>
-              <p>+91 6353 550 989</p>
-            </article>
-          </div>
         </section>
 
         <section className="contact-form-section">
