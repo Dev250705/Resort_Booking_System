@@ -145,7 +145,7 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign(
       { id: user._id.toString(), role: user.role },
       secret,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" },
     );
 
     res.json({
@@ -177,11 +177,12 @@ router.post("/forgot-password", async (req, res) => {
       from: process.env.EMAIL_USER,
       to: user.email,
       subject: "Reset Password",
-      html: `<a href="http://localhost:3000/reset-password?token=${token}">Reset Password</a>`,
+      html: `<a href="https://resort-booking-system-five.vercel.app/reset-password?token=${token}">Reset Password</a>`,
     });
 
     res.json({ message: "Reset link sent" });
-  } catch {
+  } catch (err) {
+    console.error("Forgot Password Error:", err);
     res.status(500).json({ message: "Error sending email" });
   }
 });
@@ -230,7 +231,7 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
     if (phone) user.phone = phone;
 
     await user.save();
-    
+
     res.json({ message: "Profile updated successfully", user });
   } catch (err) {
     console.error("Error updating profile:", err);
@@ -270,8 +271,8 @@ router.put("/update-password", authMiddleware, async (req, res) => {
 router.get("/profile", authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id;
-    const user = await User.findById(userId).select('-password');
-    
+    const user = await User.findById(userId).select("-password");
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -311,9 +312,9 @@ router.post("/wishlist/toggle", authMiddleware, async (req, res) => {
 router.get("/wishlist", authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id;
-    const user = await User.findById(userId).populate('wishlist');
+    const user = await User.findById(userId).populate("wishlist");
     if (!user) return res.status(404).json({ message: "User not found" });
-    
+
     res.json({ wishlist: user.wishlist });
   } catch (err) {
     console.error("Error fetching wishlist:", err);
@@ -335,18 +336,23 @@ router.get("/admin/all", authMiddleware, adminMiddleware, async (req, res) => {
 });
 
 // Admin: Update user role
-router.put("/admin/:id/role", authMiddleware, adminMiddleware, async (req, res) => {
-  try {
-    const { role } = req.body;
-    if (!["admin", "user"].includes(role)) {
-      return res.status(400).json({ message: "Invalid role" });
+router.put(
+  "/admin/:id/role",
+  authMiddleware,
+  adminMiddleware,
+  async (req, res) => {
+    try {
+      const { role } = req.body;
+      if (!["admin", "user"].includes(role)) {
+        return res.status(400).json({ message: "Invalid role" });
+      }
+      await User.findByIdAndUpdate(req.params.id, { role });
+      res.json({ message: "Role updated successfully" });
+    } catch (err) {
+      console.error("Error updating user role:", err);
+      res.status(500).json({ message: "Server error updating role" });
     }
-    await User.findByIdAndUpdate(req.params.id, { role });
-    res.json({ message: "Role updated successfully" });
-  } catch (err) {
-    console.error("Error updating user role:", err);
-    res.status(500).json({ message: "Server error updating role" });
-  }
-});
+  },
+);
 
 module.exports = router;
