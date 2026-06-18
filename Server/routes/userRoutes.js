@@ -68,9 +68,10 @@ router.post("/register", async (req, res) => {
     });
 
     res.json({ message: "OTP sent" });
-  } catch {
-    res.status(500).json({ message: "Error registering user" });
-  }
+  } } catch (err) {
+  console.error("REGISTER ERROR:", err);
+  res.status(500).json({ message: err.message });
+}
 });
 
 router.post("/verify-otp", async (req, res) => {
@@ -123,9 +124,10 @@ router.post("/resend-otp", async (req, res) => {
     });
 
     res.json({ message: "OTP resent" });
-  } catch {
-    res.status(500).json({ message: "Error resending OTP" });
-  }
+  } catch (err) {
+  console.error("RESEND OTP ERROR:", err);
+  res.status(500).json({ message: err.message });
+}
 });
 
 router.post("/login", async (req, res) => {
@@ -194,10 +196,10 @@ router.post("/forgot-password", async (req, res) => {
     });
 
     res.json({ message: "Reset link sent" });
-  } catch (err) {
-    console.error("Forgot Password Error:", err);
-    res.status(500).json({ message: "Error sending email" });
-  }
+  }  catch (err) {
+  console.error("FORGOT PASSWORD ERROR:", err);
+  res.status(500).json({ message: err.message });
+}
 });
 
 router.post("/reset-password", async (req, res) => {
