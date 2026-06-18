@@ -23,12 +23,12 @@ export default function AdminResorts() {
   const [editingResort, setEditingResort] = useState(null);
   const [newRoom, setNewRoom] = useState({ title: "", description: "", basePrice: "", inventoryCount: "", maxGuests: 2, amenities: "", roomImages: [] });
 
-  const getImageUrl = (url) => url?.startsWith('/uploads') ? `https://resort-booking-system.onrender.com${url}` : url;
+  const getImageUrl = (url) => url?.startsWith('/uploads') ? `https://resort-booking-system-cizy.vercel.app${url}` : url;
 
   const loadResorts = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`https://resort-booking-system.onrender.com/api/resorts/`);
+      const res = await fetch(`https://resort-booking-system-cizy.vercel.app/api/resorts/`);
       const data = await res.json();
       setResorts(Array.isArray(data) ? data : []);
     } catch (e) {
@@ -45,7 +45,7 @@ export default function AdminResorts() {
   const handleDelete = async (resortId) => {
     if (!window.confirm("Delete this resort?")) return;
     try {
-      const res = await fetch(`https://resort-booking-system.onrender.com/api/resorts/admin/${resortId}`, {
+      const res = await fetch(`https://resort-booking-system-cizy.vercel.app/api/resorts/admin/${resortId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${getAuthToken()}` }
       });
@@ -78,7 +78,7 @@ export default function AdminResorts() {
     }
 
     try {
-      const res = await fetch(`https://resort-booking-system.onrender.com/api/resorts/admin`, {
+      const res = await fetch(`https://resort-booking-system-cizy.vercel.app/api/resorts/admin`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${getAuthToken()}`
@@ -115,7 +115,7 @@ export default function AdminResorts() {
     }
 
     try {
-      const res = await fetch(`https://resort-booking-system.onrender.com/api/resorts/admin/${resortId}/rooms`, {
+      const res = await fetch(`https://resort-booking-system-cizy.vercel.app/api/resorts/admin/${resortId}/rooms`, {
         method: "POST",
         headers: { Authorization: `Bearer ${getAuthToken()}` },
         body: payload
@@ -134,7 +134,7 @@ export default function AdminResorts() {
   const deleteRoom = async (resortId, roomId) => {
     if (!window.confirm("Remove this room type?")) return;
     try {
-      const res = await fetch(`https://resort-booking-system.onrender.com/api/resorts/admin/${resortId}/rooms/${roomId}`, {
+      const res = await fetch(`https://resort-booking-system-cizy.vercel.app/api/resorts/admin/${resortId}/rooms/${roomId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${getAuthToken()}` }
       });
@@ -155,7 +155,7 @@ export default function AdminResorts() {
     if (newFeatures === null) return; // User cancelled
 
     try {
-      const res = await fetch(`https://resort-booking-system.onrender.com/api/resorts/admin/${resortId}/rooms/${roomId}`, {
+      const res = await fetch(`https://resort-booking-system-cizy.vercel.app/api/resorts/admin/${resortId}/rooms/${roomId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -178,7 +178,7 @@ export default function AdminResorts() {
   const removeImage = async (resortId, imageUrl) => {
     if (!window.confirm("Remove this image?")) return;
     try {
-      const res = await fetch(`https://resort-booking-system.onrender.com/api/resorts/admin/${resortId}/images?imageUrl=${encodeURIComponent(imageUrl)}`, {
+      const res = await fetch(`https://resort-booking-system-cizy.vercel.app/api/resorts/admin/${resortId}/images?imageUrl=${encodeURIComponent(imageUrl)}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${getAuthToken()}` }
       });
@@ -227,7 +227,7 @@ export default function AdminResorts() {
               const payload = new FormData();
               Array.from(files).forEach(f => payload.append("newImages", f));
               try {
-                const res = await fetch(`https://resort-booking-system.onrender.com/api/resorts/admin/${editingResort._id}/images`, {
+                const res = await fetch(`https://resort-booking-system-cizy.vercel.app/api/resorts/admin/${editingResort._id}/images`, {
                   method: "POST",
                   headers: { Authorization: `Bearer ${getAuthToken()}` },
                   body: payload

@@ -34,7 +34,7 @@ export default function Dashboard() {
         const token = sessionStorage.getItem('token');
         if (!token) return;
 
-        const response = await fetch('https://resort-booking-system.onrender.com/api/users/profile', {
+        const response = await fetch('https://resort-booking-system-cizy.vercel.app/api/users/profile', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await response.json();
@@ -56,7 +56,7 @@ export default function Dashboard() {
         return;
       }
       try {
-        const response = await fetch('https://resort-booking-system.onrender.com/api/bookings/my-bookings', {
+        const response = await fetch('https://resort-booking-system-cizy.vercel.app/api/bookings/my-bookings', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await response.json();
@@ -78,7 +78,7 @@ export default function Dashboard() {
 
           setStats({ total, upcoming, completed, reviewsPending });
 
-          const getImageUrl = (url) => typeof url === 'string' && url.startsWith('/uploads') ? `https://resort-booking-system.onrender.com${url}` : url;
+          const getImageUrl = (url) => typeof url === 'string' && url.startsWith('/uploads') ? `https://resort-booking-system-cizy.vercel.app${url}` : url;
 
           const mappedBookings = bookings.map(b => {
             const rawImage = b.resort?.images?.[0];
@@ -122,7 +122,7 @@ export default function Dashboard() {
     }
   }, [activeTab, navigate]);
 
-  const renderContent = () => {
+  const resort-booking-system-cizy.vercel.appContent = () => {
     switch (activeTab) {
       case 'My Profile':
         return <Profile />;
@@ -207,7 +207,7 @@ export default function Dashboard() {
         </header>
 
         <div className="dashboard-content">
-          {renderContent()}
+          {resort-booking-system-cizy.vercel.appContent()}
         </div>
       </main>
     </div>

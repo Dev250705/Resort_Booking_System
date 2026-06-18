@@ -19,7 +19,7 @@ export default function UserDashboard() {
         return;
       }
       try {
-        const response = await fetch(`https://resort-booking-system.onrender.com/api/bookings/my-bookings`, {
+        const response = await fetch(`https://resort-booking-system-cizy.vercel.app/api/bookings/my-bookings`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await response.json();

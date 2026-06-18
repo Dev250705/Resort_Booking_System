@@ -19,7 +19,7 @@ export default function AdminExplore() {
   const loadContent = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`https://resort-booking-system.onrender.com/api/explore?type=${activeTab}`);
+      const res = await fetch(`https://resort-booking-system-cizy.vercel.app/api/explore?type=${activeTab}`);
       const data = await res.json();
       if (res.ok) setContent(data.content || []);
     } catch (e) {
@@ -36,7 +36,7 @@ export default function AdminExplore() {
   const handleDelete = async (itemId) => {
     if (!window.confirm("Delete this item?")) return;
     try {
-      const res = await fetch(`https://resort-booking-system.onrender.com/api/explore/admin/${itemId}`, {
+      const res = await fetch(`https://resort-booking-system-cizy.vercel.app/api/explore/admin/${itemId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${getAuthToken()}` }
       });
@@ -57,7 +57,7 @@ export default function AdminExplore() {
     payload.append("image", formData.image);
 
     try {
-      const res = await fetch(`https://resort-booking-system.onrender.com/api/explore/admin`, {
+      const res = await fetch(`https://resort-booking-system-cizy.vercel.app/api/explore/admin`, {
         method: "POST",
         headers: { 
           Authorization: `Bearer ${getAuthToken()}` 

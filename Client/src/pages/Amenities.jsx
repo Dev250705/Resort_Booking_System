@@ -7,7 +7,7 @@ export default function Amenities() {
   const [amenities, setAmenities] = useState([]);
 
   useEffect(() => {
-    fetch(`https://resort-booking-system.onrender.com/api/explore?type=amenity`)
+    fetch(`https://resort-booking-system-cizy.vercel.app/api/explore?type=amenity`)
       .then(r => r.json())
       .then(d => {
         if (d.success && d.content) {
@@ -31,7 +31,7 @@ export default function Amenities() {
         <div className="explore-grid" style={{ marginBottom: '60px' }}>
           {amenities.map(item => (
             <div key={item._id || item.id} className="explore-card">
-              <img src={item.imageUrl?.startsWith('/uploads') ? `https://resort-booking-system.onrender.com${item.imageUrl}` : item.imageUrl} alt={item.title} className="explore-card-img" />
+              <img src={item.imageUrl?.startsWith('/uploads') ? `https://resort-booking-system-cizy.vercel.app${item.imageUrl}` : item.imageUrl} alt={item.title} className="explore-card-img" />
               <div className="explore-card-body">
                 <h3>{item.title}</h3>
                 <p>{item.description || item.desc}</p>

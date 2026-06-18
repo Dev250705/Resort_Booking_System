@@ -39,8 +39,8 @@ export default function Resort() {
            }
         }
         const url = qs.toString() 
-             ? `https://resort-booking-system.onrender.com/api/resorts?${qs.toString()}` 
-             : `https://resort-booking-system.onrender.com/api/resorts`;
+             ? `https://resort-booking-system-cizy.vercel.app/api/resorts?${qs.toString()}` 
+             : `https://resort-booking-system-cizy.vercel.app/api/resorts`;
 
         const response = await fetch(url);
         if (!response.ok) {
@@ -48,7 +48,7 @@ export default function Resort() {
         }
         const data = await response.json();
 
-        const getImageUrl = (url) => url?.startsWith('/uploads') ? `https://resort-booking-system.onrender.com${url}` : url;
+        const getImageUrl = (url) => url?.startsWith('/uploads') ? `https://resort-booking-system-cizy.vercel.app${url}` : url;
         let mappedData = Array.isArray(data) ? data.map(resort => {
           if (resort.images) resort.images = resort.images.map(getImageUrl);
           if (resort.roomTypes) {
@@ -98,7 +98,7 @@ export default function Resort() {
             ? `?checkIn=${encodeURIComponent(roomsCheckIn)}&checkOut=${encodeURIComponent(roomsCheckOut)}`
             : "";
         const response = await fetch(
-          `https://resort-booking-system.onrender.com/api/resorts/${resortId}${qs}`
+          `https://resort-booking-system-cizy.vercel.app/api/resorts/${resortId}${qs}`
         );
         if (!response.ok) {
           throw new Error("Resort not found");
@@ -143,7 +143,7 @@ export default function Resort() {
       .join(", ");
   };
 
-  const renderDetailView = () => {
+  const resort-booking-system-cizy.vercel.appDetailView = () => {
     if (detailLoading) {
       return (
         <div className="gallery-container">
@@ -318,7 +318,7 @@ export default function Resort() {
     );
   };
 
-  return isDetailView ? renderDetailView() : (
+  return isDetailView ? resort-booking-system-cizy.vercel.appDetailView() : (
     <div className="gallery-container">
       <Navbar />
 

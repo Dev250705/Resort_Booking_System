@@ -22,7 +22,7 @@ export default function Security() {
 
     try {
       const token = sessionStorage.getItem('token');
-      const response = await fetch('https://resort-booking-system.onrender.com/api/users/update-password', {
+      const response = await fetch('https://resort-booking-system-cizy.vercel.app/api/users/update-password', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

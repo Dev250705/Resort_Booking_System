@@ -14,7 +14,7 @@ export default function Payments() {
           return;
         }
 
-        const res = await fetch('https://resort-booking-system.onrender.com/api/payments/my-payments', {
+        const res = await fetch('https://resort-booking-system-cizy.vercel.app/api/payments/my-payments', {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();

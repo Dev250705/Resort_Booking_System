@@ -60,7 +60,7 @@ export default function ResortDetails() {
       const token = sessionStorage.getItem("token");
       if (!token) return;
       try {
-        const res = await fetch("https://resort-booking-system.onrender.com/api/users/profile", {
+        const res = await fetch("https://resort-booking-system-cizy.vercel.app/api/users/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -143,7 +143,7 @@ export default function ResortDetails() {
     if (!id) return;
     setReviewsBlock((s) => ({ ...s, loading: true, error: null }));
     try {
-      const r = await fetch(`https://resort-booking-system.onrender.com/api/reviews/resort/${id}`);
+      const r = await fetch(`https://resort-booking-system-cizy.vercel.app/api/reviews/resort/${id}`);
       const d = await r.json();
       if (!r.ok) throw new Error(d.message || "Failed to load reviews");
       setReviewsBlock({
@@ -179,7 +179,7 @@ export default function ResortDetails() {
     setReviewWrite((s) => ({ ...s, loading: true }));
     try {
       const r = await fetch(
-        `https://resort-booking-system.onrender.com/api/reviews/eligibility/${id}`,
+        `https://resort-booking-system-cizy.vercel.app/api/reviews/eligibility/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -234,7 +234,7 @@ export default function ResortDetails() {
     }
     setRwSubmitting(true);
     try {
-      const response = await fetch("https://resort-booking-system.onrender.com/api/reviews", {
+      const response = await fetch("https://resort-booking-system-cizy.vercel.app/api/reviews", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -274,7 +274,7 @@ export default function ResortDetails() {
             ? `?checkIn=${encodeURIComponent(searchDates.checkIn)}&checkOut=${encodeURIComponent(searchDates.checkOut)}`
             : "";
         const response = await fetch(
-          `https://resort-booking-system.onrender.com/api/resorts/${id}${qs}`,
+          `https://resort-booking-system-cizy.vercel.app/api/resorts/${id}${qs}`,
         );
         if (!response.ok) throw new Error("Resort details not available");
         const data = await response.json();
@@ -294,7 +294,7 @@ export default function ResortDetails() {
 
         const getImageUrl = (url) =>
           url?.startsWith("/uploads")
-            ? `https://resort-booking-system.onrender.com${url}`
+            ? `https://resort-booking-system-cizy.vercel.app${url}`
             : url;
         if (data.images) {
           data.images = data.images.map(getImageUrl);
@@ -402,7 +402,7 @@ export default function ResortDetails() {
       }
 
       const response = await fetch(
-        "https://resort-booking-system.onrender.com/api/bookings/checkout",
+        "https://resort-booking-system-cizy.vercel.app/api/bookings/checkout",
         {
           method: "POST",
           headers: {
@@ -434,7 +434,7 @@ export default function ResortDetails() {
         throw new Error("Could not load Razorpay Payment Gateway.");
 
       const orderRes = await fetch(
-        "https://resort-booking-system.onrender.com/api/payments/create-order",
+        "https://resort-booking-system-cizy.vercel.app/api/payments/create-order",
         {
           method: "POST",
           headers: {
@@ -459,7 +459,7 @@ export default function ResortDetails() {
       if (orderData.order.id.startsWith("order_MOCK")) {
         setTimeout(async () => {
           const verifyRes = await fetch(
-            "https://resort-booking-system.onrender.com/api/payments/verify-payment",
+            "https://resort-booking-system-cizy.vercel.app/api/payments/verify-payment",
             {
               method: "POST",
               headers: {
@@ -502,7 +502,7 @@ export default function ResortDetails() {
           try {
             setBookLoading(true);
             const verifyRes = await fetch(
-              "https://resort-booking-system.onrender.com/api/payments/verify-payment",
+              "https://resort-booking-system-cizy.vercel.app/api/payments/verify-payment",
               {
                 method: "POST",
                 headers: {

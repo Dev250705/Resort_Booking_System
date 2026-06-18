@@ -12,7 +12,7 @@ export default function Bookings({ hideNavbar = false }) {
         const token = sessionStorage.getItem('token');
         if (!token) return;
 
-        const res = await fetch('https://resort-booking-system.onrender.com/api/bookings/my-bookings', {
+        const res = await fetch('https://resort-booking-system-cizy.vercel.app/api/bookings/my-bookings', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();

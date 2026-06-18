@@ -76,7 +76,7 @@ export default function Payment() {
       setMockModalError('');
       setIsProcessing(true);
       const token = getStoredAuthToken();
-      const verifyRes = await fetch(`https://resort-booking-system.onrender.com/api/payments/verify-payment`, {
+      const verifyRes = await fetch(`https://resort-booking-system-cizy.vercel.app/api/payments/verify-payment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -236,7 +236,7 @@ export default function Payment() {
   };
 
   const createDraftBooking = async (token) => {
-    const checkoutRes = await fetch(`https://resort-booking-system.onrender.com/api/bookings/checkout`, {
+    const checkoutRes = await fetch(`https://resort-booking-system-cizy.vercel.app/api/bookings/checkout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -288,7 +288,7 @@ export default function Payment() {
 
       const bookingId = await createDraftBooking(token);
 
-      const orderRes = await fetch(`https://resort-booking-system.onrender.com/api/payments/create-order`, {
+      const orderRes = await fetch(`https://resort-booking-system-cizy.vercel.app/api/payments/create-order`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -354,7 +354,7 @@ export default function Payment() {
         },
         handler: async function (paymentResponse) {
           try {
-            const verifyRes = await fetch(`https://resort-booking-system.onrender.com/api/payments/verify-payment`, {
+            const verifyRes = await fetch(`https://resort-booking-system-cizy.vercel.app/api/payments/verify-payment`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",

@@ -41,7 +41,7 @@ function VerifyOtp() {
     setError("");
     setMessage("");
 
-    const res = await fetch("https://resort-booking-system.onrender.com/api/users/verify-otp", {
+    const res = await fetch("https://resort-booking-system-cizy.vercel.app/api/users/verify-otp", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -64,7 +64,7 @@ function VerifyOtp() {
   const handleResend = async () => {
     if (timer > 0) return;
 
-    const res = await fetch("https://resort-booking-system.onrender.com/api/users/resend-otp", {
+    const res = await fetch("https://resort-booking-system-cizy.vercel.app/api/users/resend-otp", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

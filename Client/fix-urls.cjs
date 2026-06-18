@@ -21,10 +21,10 @@ let count = 0;
 
 files.forEach(file => {
   let content = fs.readFileSync(file, 'utf8');
-  if (content.includes('https://resort-booking-system.onrender.com')) {
-    // This matches: "https://resort-booking-system.onrender.com/some/path", 'http...', or `http...`
+  if (content.includes('https://resort-booking-system-cizy.vercel.app')) {
+    // This matches: "https://resort-booking-system-cizy.vercel.app/some/path", 'http...', or `http...`
     // and replaces it with a template literal using window.location.hostname
-    const newContent = content.replace(/(['"`])http:\/\/localhost:5000(.*?)\1/g, '`https://resort-booking-system.onrender.com$2`');
+    const newContent = content.replace(/(['"`])http:\/\/localhost:5000(.*?)\1/g, '`https://resort-booking-system-cizy.vercel.app$2`');
     if (content !== newContent) {
       fs.writeFileSync(file, newContent, 'utf8');
       console.log('Fixed ' + file);

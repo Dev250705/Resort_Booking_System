@@ -8,7 +8,7 @@ export default function Gallery() {
   const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
-    fetch(`https://resort-booking-system.onrender.com/api/explore?type=gallery`)
+    fetch(`https://resort-booking-system-cizy.vercel.app/api/explore?type=gallery`)
       .then(r => r.json())
       .then(d => { 
         if (d.success && d.content) {
@@ -34,7 +34,7 @@ export default function Gallery() {
         <div className="gallery-grid" style={{ marginTop: '20px', marginBottom: '40px' }}>
           {displayedPhotos.map(photo => (
             <div key={photo._id || photo.id} className="gallery-item">
-              <img src={photo.imageUrl?.startsWith('/uploads') ? `https://resort-booking-system.onrender.com${photo.imageUrl}` : photo.imageUrl} alt={photo.title} />
+              <img src={photo.imageUrl?.startsWith('/uploads') ? `https://resort-booking-system-cizy.vercel.app${photo.imageUrl}` : photo.imageUrl} alt={photo.title} />
               <div className="gallery-caption">
                 <h4>{photo.title}</h4>
               </div>

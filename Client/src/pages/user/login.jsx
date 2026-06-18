@@ -39,7 +39,7 @@ function Login() {
     }
     setLoading(true);
     try {
-      const res = await fetch("https://resort-booking-system.onrender.com/api/users/login", {
+      const res = await fetch("https://resort-booking-system-cizy.vercel.app/api/users/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -75,7 +75,7 @@ function Login() {
     setForgotError("");
     try {
       const res = await fetch(
-        "https://resort-booking-system.onrender.com/api/users/forgot-password",
+        "https://resort-booking-system-cizy.vercel.app/api/users/forgot-password",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
