@@ -4,7 +4,6 @@ import { Heart } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "./resortDetails.css";
-import API_URL from "../api";
 const Icons = {
   Cross: () => (
     <svg
