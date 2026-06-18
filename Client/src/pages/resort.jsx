@@ -318,7 +318,7 @@ export default function Resort() {
     );
   };
 
-  return isDetailView ? resort-booking-system-cizy.vercel.appDetailView() : (
+  return isDetailView ? ResortDetailView() : (
     <div className="gallery-container">
       <Navbar />
 
