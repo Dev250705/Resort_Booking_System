@@ -14,7 +14,7 @@ export default function Payments() {
           return;
         }
 
-        const res = await fetch('http://localhost:5000/api/payments/my-payments', {
+        const res = await fetch('https://resort-booking-system.onrender.com/api/payments/my-payments', {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();

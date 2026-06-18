@@ -14,7 +14,7 @@ export default function Profile() {
         const token = sessionStorage.getItem('token');
         if (!token) return;
 
-        const response = await fetch('http://localhost:5000/api/users/profile', {
+        const response = await fetch('https://resort-booking-system.onrender.com/api/users/profile', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await response.json();
@@ -41,7 +41,7 @@ export default function Profile() {
 
     try {
       const token = sessionStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/users/update-profile', {
+      const response = await fetch('https://resort-booking-system.onrender.com/api/users/update-profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -15,7 +15,7 @@ export default function Wishlist() {
           return;
         }
 
-        const res = await fetch('http://localhost:5000/api/users/wishlist', {
+        const res = await fetch('https://resort-booking-system.onrender.com/api/users/wishlist', {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();
