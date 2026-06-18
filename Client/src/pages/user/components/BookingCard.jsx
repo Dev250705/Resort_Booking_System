@@ -16,7 +16,7 @@ const BookingCard = ({ booking, isFeatured = false }) => {
 
   const rawImageUrl = booking.resort?.images?.[0] || booking.image;
   const imageUrl = rawImageUrl
-    ? (rawImageUrl.startsWith('/uploads') ? `http://${window.location.hostname}:5000${rawImageUrl}` : rawImageUrl)
+    ? (rawImageUrl.startsWith('/uploads') ? `https://resort-booking-system.onrender.com${rawImageUrl}` : rawImageUrl)
     : "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=600";
 
   const handleDownloadInvoice = () => {

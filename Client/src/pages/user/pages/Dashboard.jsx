@@ -78,7 +78,7 @@ export default function Dashboard() {
 
           setStats({ total, upcoming, completed, reviewsPending });
 
-          const getImageUrl = (url) => typeof url === 'string' && url.startsWith('/uploads') ? `http://${window.location.hostname}:5000${url}` : url;
+          const getImageUrl = (url) => typeof url === 'string' && url.startsWith('/uploads') ? `https://resort-booking-system.onrender.com${url}` : url;
 
           const mappedBookings = bookings.map(b => {
             const rawImage = b.resort?.images?.[0];

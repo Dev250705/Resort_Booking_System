@@ -24,7 +24,7 @@ files.forEach(file => {
   if (content.includes('http://localhost:5000')) {
     // This matches: "http://localhost:5000/some/path", 'http...', or `http...`
     // and replaces it with a template literal using window.location.hostname
-    const newContent = content.replace(/(['"`])http:\/\/localhost:5000(.*?)\1/g, '`http://${window.location.hostname}:5000$2`');
+    const newContent = content.replace(/(['"`])http:\/\/localhost:5000(.*?)\1/g, '`https://resort-booking-system.onrender.com$2`');
     if (content !== newContent) {
       fs.writeFileSync(file, newContent, 'utf8');
       console.log('Fixed ' + file);

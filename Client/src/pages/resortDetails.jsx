@@ -4,7 +4,7 @@ import { Heart } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "./resortDetails.css";
-
+import API_URL from "../api";
 const Icons = {
   Cross: () => (
     <svg
@@ -82,7 +82,7 @@ export default function ResortDetails() {
     setIsWishlistLoading(true);
     try {
       const res = await fetch(
-        "http://localhost:5000/api/users/wishlist/toggle",
+        `${API_URL}/api/users/wishlist/toggle`,
         {
           method: "POST",
           headers: {
@@ -295,7 +295,7 @@ export default function ResortDetails() {
 
         const getImageUrl = (url) =>
           url?.startsWith("/uploads")
-            ? `http://${window.location.hostname}:5000${url}`
+            ? `https://resort-booking-system.onrender.com${url}`
             : url;
         if (data.images) {
           data.images = data.images.map(getImageUrl);

@@ -13,7 +13,7 @@ export default function AdminContacts() {
 
   const fetchContacts = async () => {
     try {
-      const res = await fetch(`http://${window.location.hostname}:5000/api/contact/admin`, {
+      const res = await fetch(`https://resort-booking-system.onrender.com/api/contact/admin`, {
         headers: { Authorization: `Bearer ${getAuthToken()}` },
       });
       if (res.ok) {
@@ -29,7 +29,7 @@ export default function AdminContacts() {
 
   const updateStatus = async (id, newStatus) => {
     try {
-      const res = await fetch(`http://${window.location.hostname}:5000/api/contact/admin/${id}`, {
+      const res = await fetch(`https://resort-booking-system.onrender.com/api/contact/admin/${id}`, {
         method: "PUT",
         headers: { 
           "Content-Type": "application/json",

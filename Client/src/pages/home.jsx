@@ -10,7 +10,7 @@ function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const navigate = useNavigate();
 
-  const getImageUrl = (url) => url?.startsWith('/uploads') ? `http://${window.location.hostname}:5000${url}` : url;
+  const getImageUrl = (url) => url?.startsWith('/uploads') ? `https://resort-booking-system.onrender.com${url}` : url;
 
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
@@ -32,7 +32,7 @@ function Home() {
   ];
 
   useEffect(() => {
-    fetch(`http://${window.location.hostname}:5000/api/resorts`)
+    fetch(`https://resort-booking-system.onrender.com/api/resorts`)
       .then((res) => res.json())
       .then((data) => {
         const recentNine = data.slice(0, 6).map(resort => {

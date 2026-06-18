@@ -12,7 +12,7 @@ export default function AdminUsers() {
   const loadUsers = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`http://${window.location.hostname}:5000/api/users/admin/all`, {
+      const res = await fetch(`https://resort-booking-system.onrender.com/api/users/admin/all`, {
         headers: { Authorization: `Bearer ${getAuthToken()}` },
       });
       const data = await res.json();
@@ -32,7 +32,7 @@ export default function AdminUsers() {
     const newRole = currentRole === "admin" ? "user" : "admin";
     if (!window.confirm(`Are you sure you want to make this user ${newRole}?`)) return;
     try {
-      const res = await fetch(`http://${window.location.hostname}:5000/api/users/admin/${userId}/role`, {
+      const res = await fetch(`https://resort-booking-system.onrender.com/api/users/admin/${userId}/role`, {
         method: "PUT",
         headers: { 
           "Content-Type": "application/json",

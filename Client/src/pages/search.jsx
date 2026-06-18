@@ -20,7 +20,7 @@ export default function Search() {
     const fetchResorts = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://${window.location.hostname}:5000/api/resorts`);
+        const response = await fetch(`https://resort-booking-system.onrender.com/api/resorts`);
         const data = await response.json();
         setResorts(data);
       } catch (err) {
@@ -106,7 +106,7 @@ export default function Search() {
                 const startingPrice = prices.length > 0 ? Math.min(...prices) : null;
                 const rawImageUrl = resort.images?.[0];
                 const imageUrl = rawImageUrl 
-                  ? (rawImageUrl.startsWith('/uploads') ? `http://${window.location.hostname}:5000${rawImageUrl}` : rawImageUrl)
+                  ? (rawImageUrl.startsWith('/uploads') ? `https://resort-booking-system.onrender.com${rawImageUrl}` : rawImageUrl)
                   : "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80";
 
                 return (

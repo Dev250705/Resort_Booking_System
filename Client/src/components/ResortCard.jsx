@@ -8,7 +8,7 @@ export default function ResortCard({ resort }) {
     <div className="card">
       <div className="card-img-container">
         <img 
-          src={resort.images?.[0] ? (resort.images[0].startsWith('http') ? resort.images[0] : `http://${window.location.hostname}:5000${resort.images[0]}`) : "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=600"} 
+          src={resort.images?.[0] ? (resort.images[0].startsWith('http') ? resort.images[0] : `https://resort-booking-system.onrender.com${resort.images[0]}`) : "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&q=80&w=600"} 
           alt={resort.name} 
         />
         <div className="card-price-badge">

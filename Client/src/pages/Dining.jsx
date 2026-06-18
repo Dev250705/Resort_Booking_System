@@ -7,7 +7,7 @@ export default function Dining() {
   const [dining, setDining] = useState([]);
 
   useEffect(() => {
-    fetch(`http://${window.location.hostname}:5000/api/explore?type=dining`)
+    fetch(`https://resort-booking-system.onrender.com/api/explore?type=dining`)
       .then(r => r.json())
       .then(d => { 
         if (d.success && d.content) {
@@ -31,7 +31,7 @@ export default function Dining() {
         <div className="explore-grid" style={{ marginBottom: '60px' }}>
           {dining.map(item => (
             <div key={item._id || item.id} className="explore-card">
-              <img src={item.imageUrl?.startsWith('/uploads') ? `http://${window.location.hostname}:5000${item.imageUrl}` : item.imageUrl} alt={item.title} className="explore-card-img" />
+              <img src={item.imageUrl?.startsWith('/uploads') ? `https://resort-booking-system.onrender.com${item.imageUrl}` : item.imageUrl} alt={item.title} className="explore-card-img" />
               <div className="explore-card-body">
                 <h3>{item.title}</h3>
                 <p>{item.description || item.desc}</p>

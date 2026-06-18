@@ -16,7 +16,7 @@ export default function AdminReviews() {
     setError("");
     setLoading(true);
     try {
-      const res = await fetch(`http://${window.location.hostname}:5000/api/reviews/admin/pending`, {
+      const res = await fetch(`https://resort-booking-system.onrender.com/api/reviews/admin/pending`, {
         headers: { Authorization: `Bearer ${getAuthToken()}` },
       });
       const data = await res.json();
@@ -43,7 +43,7 @@ export default function AdminReviews() {
     setActionId(reviewId);
     try {
       const res = await fetch(
-        `http://${window.location.hostname}:5000/api/reviews/admin/${reviewId}/approve`,
+        `https://resort-booking-system.onrender.com/api/reviews/admin/${reviewId}/approve`,
         {
           method: "PATCH",
           headers: { Authorization: `Bearer ${getAuthToken()}` },
@@ -63,7 +63,7 @@ export default function AdminReviews() {
     if (!window.confirm("Reject and delete this review? The guest can submit again.")) return;
     setActionId(reviewId);
     try {
-      const res = await fetch(`http://${window.location.hostname}:5000/api/reviews/admin/${reviewId}`, {
+      const res = await fetch(`https://resort-booking-system.onrender.com/api/reviews/admin/${reviewId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${getAuthToken()}` },
       });

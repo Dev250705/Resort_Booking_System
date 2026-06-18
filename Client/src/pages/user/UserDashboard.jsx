@@ -19,7 +19,7 @@ export default function UserDashboard() {
         return;
       }
       try {
-        const response = await fetch(`http://${window.location.hostname}:5000/api/bookings/my-bookings`, {
+        const response = await fetch(`https://resort-booking-system.onrender.com/api/bookings/my-bookings`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await response.json();

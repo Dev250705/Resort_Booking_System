@@ -25,7 +25,7 @@ export default function MyBookings() {
     }
 
     try {
-      const response = await fetch(`http://${window.location.hostname}:5000/api/bookings/my-bookings`, {
+      const response = await fetch(`https://resort-booking-system.onrender.com/api/bookings/my-bookings`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
@@ -45,7 +45,7 @@ export default function MyBookings() {
     setCancellingId(bookingId);
     const token = sessionStorage.getItem('token');
     try {
-      const response = await fetch(`http://${window.location.hostname}:5000/api/bookings/cancel/${bookingId}`, {
+      const response = await fetch(`https://resort-booking-system.onrender.com/api/bookings/cancel/${bookingId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -284,7 +284,7 @@ export default function MyBookings() {
     }
 
     if (rawImage.startsWith('/uploads')) {
-      return `http://${window.location.hostname}:5000${rawImage}`;
+      return `https://resort-booking-system.onrender.com${rawImage}`;
     }
 
     return rawImage;

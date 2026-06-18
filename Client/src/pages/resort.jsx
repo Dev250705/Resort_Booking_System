@@ -39,8 +39,8 @@ export default function Resort() {
            }
         }
         const url = qs.toString() 
-             ? `http://${window.location.hostname}:5000/api/resorts?${qs.toString()}` 
-             : `http://${window.location.hostname}:5000/api/resorts`;
+             ? `https://resort-booking-system.onrender.com/api/resorts?${qs.toString()}` 
+             : `https://resort-booking-system.onrender.com/api/resorts`;
 
         const response = await fetch(url);
         if (!response.ok) {
@@ -48,7 +48,7 @@ export default function Resort() {
         }
         const data = await response.json();
 
-        const getImageUrl = (url) => url?.startsWith('/uploads') ? `http://${window.location.hostname}:5000${url}` : url;
+        const getImageUrl = (url) => url?.startsWith('/uploads') ? `https://resort-booking-system.onrender.com${url}` : url;
         let mappedData = Array.isArray(data) ? data.map(resort => {
           if (resort.images) resort.images = resort.images.map(getImageUrl);
           if (resort.roomTypes) {
@@ -98,7 +98,7 @@ export default function Resort() {
             ? `?checkIn=${encodeURIComponent(roomsCheckIn)}&checkOut=${encodeURIComponent(roomsCheckOut)}`
             : "";
         const response = await fetch(
-          `http://${window.location.hostname}:5000/api/resorts/${resortId}${qs}`
+          `https://resort-booking-system.onrender.com/api/resorts/${resortId}${qs}`
         );
         if (!response.ok) {
           throw new Error("Resort not found");

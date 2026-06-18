@@ -18,7 +18,7 @@ function Contact() {
     e.preventDefault();
     setStatusMsg("Submitting...");
     try {
-      const res = await fetch(`http://${window.location.hostname}:5000/api/contact`, {
+      const res = await fetch(`https://resort-booking-system.onrender.com/api/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
