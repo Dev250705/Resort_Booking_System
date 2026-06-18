@@ -299,6 +299,13 @@ router.get("/profile", authMiddleware, async (req, res) => {
   }
 });
 
+router.get("/test", (req, res) => {
+  res.json({
+    emailUser: process.env.EMAIL_USER,
+    emailPassExists: !!process.env.EMAIL_PASS,
+  });
+});
+
 // Toggle Wishlist
 router.post("/wishlist/toggle", authMiddleware, async (req, res) => {
   try {
