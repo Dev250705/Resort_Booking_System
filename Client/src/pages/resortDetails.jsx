@@ -116,6 +116,7 @@ export default function ResortDetails() {
   const [checkInDate, setCheckInDate] = useState("");
   const [checkOutDate, setCheckOutDate] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const [guests, setGuests] = useState(searchDates.guests || 2);
   const [bookLoading, setBookLoading] = useState(false);
   const [bookError, setBookError] = useState(null);
   const [bookSuccess, setBookSuccess] = useState(false);
