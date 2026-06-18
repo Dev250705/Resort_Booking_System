@@ -3,16 +3,17 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
 const connectDB = require("./config/db");
+const PORT = process.env.PORT || 5000;
 
 dotenv.config();
 connectDB();
 
 const jwtSecretConfigured = Boolean(
-  String(process.env.JWT_SECRET || "").trim()
+  String(process.env.JWT_SECRET || "").trim(),
 );
 if (!jwtSecretConfigured) {
   console.error(
-    "[auth] JWT_SECRET is empty — login and payments will fail until you set JWT_SECRET in Server/.env"
+    "[auth] JWT_SECRET is empty — login and payments will fail until you set JWT_SECRET in Server/.env",
   );
 }
 
@@ -22,15 +23,23 @@ const maskedKeyId = razorpayKeyId
   ? `${razorpayKeyId.slice(0, 12)}...${razorpayKeyId.slice(-4)}`
   : "missing";
 console.log(
-  `[Razorpay Config] keyId=${maskedKeyId}, secretLoaded=${razorpaySecret ? "yes" : "no"}`
+  `[Razorpay Config] keyId=${maskedKeyId}, secretLoaded=${razorpaySecret ? "yes" : "no"}`,
 );
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "https://resort-booking-system-five.vercel.app",
+    ],
+    credentials: true,
+  }),
+);
 app.use(express.json());
 
 // Serve static files from 'uploads' directory
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const userRoutes = require("./routes/userRoutes");
 
@@ -54,6 +63,6 @@ app.use("/api/explore", exploreRoutes);
 const contactRoutes = require("./routes/contactRoutes");
 app.use("/api/contact", contactRoutes);
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server running on port ${process.env.PORT}`);
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
