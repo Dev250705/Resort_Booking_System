@@ -47,6 +47,16 @@ app.get("/", (req, res) => {
   res.send("Server is running");
 });
 
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error("Database connection fail:", error.message);
+    res.status(500).json({ error: "Database not ready yet" });
+  }
+});
+
 app.use("/api/users", userRoutes);
 const resortRoutes = require("./routes/resortRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
