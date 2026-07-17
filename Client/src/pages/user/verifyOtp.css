@@ -70,3 +70,17 @@
   color: #ef4444;
   margin-bottom: 10px;
 }
+
+.check-spam {
+  margin-top: 8px;
+  margin-bottom: 18px;
+  font-size: 14px;
+  color: #9ca3af; /* Light gray */
+  text-align: center;
+  line-height: 1.5;
+}
+
+.check-spam strong {
+  color: #38bdf8; /* Same blue as Verify button */
+  font-weight: 600;
+}
