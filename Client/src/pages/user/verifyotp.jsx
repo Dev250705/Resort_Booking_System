@@ -41,13 +41,16 @@ function VerifyOtp() {
     setError("");
     setMessage("");
 
-    const res = await fetch("https://resort-booking-system-cizy.vercel.app/api/users/verify-otp", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const res = await fetch(
+      "https://resort-booking-system-cizy.vercel.app/api/users/verify-otp",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, otp: finalOtp }),
       },
-      body: JSON.stringify({ email, otp: finalOtp }),
-    });
+    );
 
     const data = await res.json();
 
@@ -64,13 +67,16 @@ function VerifyOtp() {
   const handleResend = async () => {
     if (timer > 0) return;
 
-    const res = await fetch("https://resort-booking-system-cizy.vercel.app/api/users/resend-otp", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const res = await fetch(
+      "https://resort-booking-system-cizy.vercel.app/api/users/resend-otp",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
       },
-      body: JSON.stringify({ email }),
-    });
+    );
 
     const data = await res.json();
 
@@ -87,7 +93,10 @@ function VerifyOtp() {
       <h2>Verify your email</h2>
       <p>Enter the 6-digit code sent to</p>
       <span className="email">{email}</span>
-
+      <p className="check-spam">
+        Can't find the OTP email? Check your <strong>Spam</strong> or{" "}
+        <strong>Junk</strong> folder.
+      </p>
       {message && <div className="success-msg">{message}</div>}
       {error && <div className="error-msg">{error}</div>}
 
